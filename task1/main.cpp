@@ -1,5 +1,5 @@
 #include <iostream>
-#include<iomanip>
+#include <iomanip>
 #include <cmath>
 
 double fact(int N) {
@@ -15,7 +15,7 @@ using namespace std;
 int main(void) {
     long double expo = 0;
     long double x = 2;
-    size_t n = 70500;
+    size_t n = 2000;
     for (int i = 0; i < n + 1; i++) {
         expo += (pow(x, i) / fact(i));
     }

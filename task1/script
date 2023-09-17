@@ -1,0 +1,7 @@
+#!/bin/bash
+for ((i = 0; i < 2; i++))
+do
+  RESULT=$(time ./a.out )
+  echo "$RESULT" >> res.txt
+  time ./a.out >> res.txt;
+done
