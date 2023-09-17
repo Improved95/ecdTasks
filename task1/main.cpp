@@ -15,10 +15,10 @@ using namespace std;
 int main(void) {
     long double expo = 0;
     long double x = 2;
-    size_t n = 2000;
+    size_t n = 72000;
     for (int i = 0; i < n + 1; i++) {
         expo += (pow(x, i) / fact(i));
     }
 
-    cout << expo << endl;
+    cout << expo;
 }
