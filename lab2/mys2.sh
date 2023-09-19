@@ -32,6 +32,8 @@ do
     echo "---" >> res.txt;
 done
 
+st=2000000
+add=400000
 n=${st}
 echo -e "\nO1" >> res.txt
 g++ -O1 main.cpp 
@@ -88,6 +90,8 @@ do
     echo "---" >> res.txt;
 done
 
+st=1844674407370955161
+add=1000000000000000
 n=${st}
 echo -e "\nOfast" >> res.txt
 g++ -Ofast main.cpp 
@@ -102,6 +106,8 @@ do
     echo "---" >> res.txt;
 done
 
+st=2000000
+add=400000
 n=${st}
 echo -e "\nOg" >> res.txt
 g++ -Og main.cpp 
