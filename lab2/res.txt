@@ -1,0 +1,175 @@
+without
+
+real    1m22,221s
+user    1m22,204s
+sys     0m0,000s
+
+real    1m23,004s
+user    1m22,979s
+sys     0m0,004s
+
+real    1m22,525s
+user    1m22,504s
+sys     0m0,004s
+
+real    1m22,765s
+user    1m22,747s
+sys     0m0,000s
+
+real    1m22,052s
+user    1m22,033s
+sys     0m0,000s
+
+O0
+
+real    1m22,961s
+user    1m22,943s
+sys     0m0,000s
+
+real    1m23,106s
+user    1m23,083s
+sys     0m0,004s
+
+real    1m23,250s
+user    1m23,230s
+sys     0m0,000s
+
+real    1m22,384s
+user    1m22,364s
+sys     0m0,004s
+
+real    1m22,424s
+user    1m22,408s
+sys     0m0,000s
+
+O1
+
+real    0m0,125s
+user    0m0,125s
+sys     0m0,000s
+
+real    0m0,125s
+user    0m0,121s
+sys     0m0,004s
+
+real    0m0,126s
+user    0m0,126s
+sys     0m0,000s
+
+real    0m0,120s
+user    0m0,116s
+sys     0m0,004s
+
+real    0m0,125s
+user    0m0,125s
+sys     0m0,000s
+
+O2
+
+real    0m0,124s
+user    0m0,124s
+sys     0m0,000s
+
+real    0m0,125s
+user    0m0,121s
+sys     0m0,004s
+
+real    0m0,120s
+user    0m0,116s
+sys     0m0,004s
+
+real    0m0,126s
+user    0m0,125s
+sys     0m0,000s
+
+real    0m0,120s
+user    0m0,116s
+sys     0m0,004s
+
+O3
+
+real    0m0,124s
+user    0m0,124s
+sys     0m0,000s
+
+real    0m0,124s
+user    0m0,119s
+sys     0m0,004s
+
+real    0m0,125s
+user    0m0,125s
+sys     0m0,000s
+
+real    0m0,124s
+user    0m0,120s
+sys     0m0,004s
+
+real    0m0,126s
+user    0m0,125s
+sys     0m0,000s
+
+Os
+
+real    0m0,125s
+user    0m0,120s
+sys     0m0,004s
+
+real    0m0,125s
+user    0m0,121s
+sys     0m0,004s
+
+real    0m0,130s
+user    0m0,130s
+sys     0m0,000s
+
+real    0m0,125s
+user    0m0,121s
+sys     0m0,004s
+
+real    0m0,128s
+user    0m0,128s
+sys     0m0,000s
+
+Ofast
+
+real    0m0,004s
+user    0m0,004s
+sys     0m0,000s
+
+real    0m0,004s
+user    0m0,000s
+sys     0m0,003s
+
+real    0m0,003s
+user    0m0,003s
+sys     0m0,000s
+
+real    0m0,003s
+user    0m0,003s
+sys     0m0,000s
+
+real    0m0,003s
+user    0m0,003s
+sys     0m0,000s
+
+Og
+
+real    0m0,125s
+user    0m0,121s
+sys     0m0,004s
+
+real    0m0,125s
+user    0m0,121s
+sys     0m0,004s
+
+real    0m0,124s
+user    0m0,124s
+sys     0m0,000s
+
+real    0m0,125s
+user    0m0,125s
+sys     0m0,000s
+
+real    0m0,125s
+user    0m0,125s
+sys     0m0,000s
