@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ctime>
+#include <string> 
 
 void swap(int &a, int &b) {
     int c = a;
@@ -11,7 +12,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
     srand(time(NULL));
 
-    size_t n = stoull(argv[1]);
+    size_t n = std::stoull(argv[1]);
     int *arr = new int[n];
 
     for (size_t i = 0; i < n; i++) {
