@@ -10,7 +10,6 @@ void swap(int &a, int &b) {
 
 using namespace std;
 int main(int argc, char* argv[]) {
-    srand(time(NULL));
 
     size_t n = std::stoull(argv[1]);
     int *arr = new int[n];
