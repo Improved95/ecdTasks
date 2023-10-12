@@ -1,82 +1,79 @@
 swap:
-        mov     eax, DWORD PTR [rdi]
-        mov     edx, DWORD PTR [rsi]
-        mov     DWORD PTR [rdi], edx
-        mov     DWORD PTR [rsi], eax
+        movl    (%rdi), %eax
+        movl    (%rsi), %edx
+        movl    %edx, (%rdi)
+        movl    %eax, (%rsi)
         ret
-.LC0:
+.LC4:
         .string "%d "
 main:
-        push    r12
-        mov     edx, 10
-        push    rbp
-        push    rbx
-        mov     rdi, QWORD PTR [rsi+8]
-        xor     esi, esi
-        call    strtol
-        movsx   r12, eax
-        mov     rbx, rax
-        lea     rdi, [0+r12*4]
+        pushq   %rbp
+        movl    $400, %edi
+        pushq   %rbx
+        subq    $8, %rsp
         call    malloc
-        mov     rbp, rax
-        test    r12, r12
-        je      .L13
-        mov     eax, ebx
-        xor     edx, edx
-.L5:
-        mov     ecx, eax
-        mov     r8, rdx
-        sub     ecx, edx
-        mov     DWORD PTR [rbp+0+rdx*4], ecx
-        add     rdx, 1
-        cmp     r12, rdx
-        jne     .L5
-        test    r8, r8
-        je      .L21
+        movdqa  .LC0(%rip), %xmm1
+        movdqa  .LC1(%rip), %xmm5
+        movdqa  .LC2(%rip), %xmm4
+        movq    %rax, %r8
+        movq    %rax, %rbp
+        leaq    400(%rax), %rbx
+        movdqa  .LC3(%rip), %xmm3
 .L4:
-        xor     edi, edi
-        lea     rsi, [rbp+0+r8*4]
+        movdqa  %xmm1, %xmm0
+        addq    $16, %rax
+        paddq   %xmm5, %xmm1
+        movdqa  %xmm0, %xmm2
+        paddq   %xmm4, %xmm2
+        shufps  $136, %xmm2, %xmm0
+        movdqa  %xmm3, %xmm2
+        psubd   %xmm0, %xmm2
+        movups  %xmm2, -16(%rax)
+        cmpq    %rbx, %rax
+        jne     .L4
+        movl    $99, %edi
+        leaq    396(%r8), %rsi
+.L5:
+        movq    %r8, %rax
 .L7:
-        mov     rax, rbp
-.L9:
-        movq    xmm0, QWORD PTR [rax]
-        pshufd  xmm1, xmm0, 0xe5
-        movd    edx, xmm0
-        movd    ecx, xmm1
-        cmp     ecx, edx
-        jge     .L8
-        pshufd  xmm0, xmm0, 225
-        movq    QWORD PTR [rax], xmm0
+        movq    (%rax), %xmm0
+        pshufd  $0xe5, %xmm0, %xmm6
+        movd    %xmm0, %ecx
+        movd    %xmm6, %edx
+        cmpl    %edx, %ecx
+        jle     .L6
+        pshufd  $225, %xmm0, %xmm0
+        movq    %xmm0, (%rax)
+.L6:
+        addq    $4, %rax
+        cmpq    %rsi, %rax
+        jne     .L7
+        subq    $1, %rdi
+        jne     .L5
 .L8:
-        add     rax, 4
-        cmp     rax, rsi
-        jne     .L9
-        add     rdi, 1
-        cmp     rdi, r8
-        jb      .L7
-        xor     ebx, ebx
-        test    r12, r12
-        je      .L19
-.L11:
-        mov     esi, DWORD PTR [rbp+0+rbx*4]
-        mov     edi, OFFSET FLAT:.LC0
-        xor     eax, eax
-        add     rbx, 1
+        movl    0(%rbp), %esi
+        movl    $.LC4, %edi
+        xorl    %eax, %eax
+        addq    $4, %rbp
         call    printf
-        cmp     rbx, r12
-        jb      .L11
-.L19:
-        pop     rbx
-        xor     eax, eax
-        pop     rbp
-        pop     r12
+        cmpq    %rbx, %rbp
+        jne     .L8
+        addq    $8, %rsp
+        xorl    %eax, %eax
+        popq    %rbx
+        popq    %rbp
         ret
-.L13:
-        or      r8, -1
-        jmp     .L4
-.L21:
-        mov     esi, DWORD PTR [rbp+0]
-        mov     edi, OFFSET FLAT:.LC0
-        xor     eax, eax
-        call    printf
-        jmp     .L19
+.LC0:
+        .quad   0
+        .quad   1
+.LC1:
+        .quad   4
+        .quad   4
+.LC2:
+        .quad   2
+        .quad   2
+.LC3:
+        .long   100
+        .long   100
+        .long   100
+        .long   100

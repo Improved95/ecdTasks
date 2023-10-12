@@ -1,121 +1,115 @@
 swap:
-        push    rbp
-        mov     rbp, rsp
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax]
-        mov     DWORD PTR [rbp-4], eax
-        mov     rax, QWORD PTR [rbp-32]
-        mov     edx, DWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     DWORD PTR [rax], edx
-        mov     rax, QWORD PTR [rbp-32]
-        mov     edx, DWORD PTR [rbp-4]
-        mov     DWORD PTR [rax], edx
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movq    %rdi, -24(%rbp)
+        movq    %rsi, -32(%rbp)
+        movq    -24(%rbp), %rax
+        movl    (%rax), %eax
+        movl    %eax, -4(%rbp)
+        movq    -32(%rbp), %rax
+        movl    (%rax), %edx
+        movq    -24(%rbp), %rax
+        movl    %edx, (%rax)
+        movq    -32(%rbp), %rax
+        movl    -4(%rbp), %edx
+        movl    %edx, (%rax)
         nop
-        pop     rbp
+        popq    %rbp
         ret
 .LC0:
         .string "%d "
 main:
-        push    rbp
-        mov     rbp, rsp
-        sub     rsp, 64
-        mov     DWORD PTR [rbp-52], edi
-        mov     QWORD PTR [rbp-64], rsi
-        mov     rax, QWORD PTR [rbp-64]
-        add     rax, 8
-        mov     rax, QWORD PTR [rax]
-        mov     rdi, rax
-        call    atoi
-        cdqe
-        mov     QWORD PTR [rbp-40], rax
-        mov     rax, QWORD PTR [rbp-40]
-        sal     rax, 2
-        mov     rdi, rax
+        pushq   %rbp
+        movq    %rsp, %rbp
+        subq    $64, %rsp
+        movl    %edi, -52(%rbp)
+        movq    %rsi, -64(%rbp)
+        movq    $100, -40(%rbp)
+        movq    -40(%rbp), %rax
+        salq    $2, %rax
+        movq    %rax, %rdi
         call    malloc
-        mov     QWORD PTR [rbp-48], rax
-        mov     QWORD PTR [rbp-8], 0
+        movq    %rax, -48(%rbp)
+        movq    $0, -8(%rbp)
         jmp     .L3
 .L4:
-        mov     rax, QWORD PTR [rbp-40]
-        mov     edx, eax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     ecx, edx
-        sub     ecx, eax
-        mov     rax, QWORD PTR [rbp-8]
-        lea     rdx, [0+rax*4]
-        mov     rax, QWORD PTR [rbp-48]
-        add     rax, rdx
-        mov     edx, ecx
-        mov     DWORD PTR [rax], edx
-        add     QWORD PTR [rbp-8], 1
+        movq    -40(%rbp), %rax
+        movl    %eax, %edx
+        movq    -8(%rbp), %rax
+        movl    %edx, %ecx
+        subl    %eax, %ecx
+        movq    -8(%rbp), %rax
+        leaq    0(,%rax,4), %rdx
+        movq    -48(%rbp), %rax
+        addq    %rdx, %rax
+        movl    %ecx, %edx
+        movl    %edx, (%rax)
+        addq    $1, -8(%rbp)
 .L3:
-        mov     rax, QWORD PTR [rbp-8]
-        cmp     rax, QWORD PTR [rbp-40]
+        movq    -8(%rbp), %rax
+        cmpq    -40(%rbp), %rax
         jb      .L4
-        mov     QWORD PTR [rbp-16], 0
+        movq    $0, -16(%rbp)
         jmp     .L5
 .L9:
-        mov     QWORD PTR [rbp-24], 0
+        movq    $0, -24(%rbp)
         jmp     .L6
 .L8:
-        mov     rax, QWORD PTR [rbp-24]
-        lea     rdx, [0+rax*4]
-        mov     rax, QWORD PTR [rbp-48]
-        add     rax, rdx
-        mov     edx, DWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-24]
-        add     rax, 1
-        lea     rcx, [0+rax*4]
-        mov     rax, QWORD PTR [rbp-48]
-        add     rax, rcx
-        mov     eax, DWORD PTR [rax]
-        cmp     edx, eax
+        movq    -24(%rbp), %rax
+        leaq    0(,%rax,4), %rdx
+        movq    -48(%rbp), %rax
+        addq    %rdx, %rax
+        movl    (%rax), %edx
+        movq    -24(%rbp), %rax
+        addq    $1, %rax
+        leaq    0(,%rax,4), %rcx
+        movq    -48(%rbp), %rax
+        addq    %rcx, %rax
+        movl    (%rax), %eax
+        cmpl    %eax, %edx
         jle     .L7
-        mov     rax, QWORD PTR [rbp-24]
-        add     rax, 1
-        lea     rdx, [0+rax*4]
-        mov     rax, QWORD PTR [rbp-48]
-        add     rdx, rax
-        mov     rax, QWORD PTR [rbp-24]
-        lea     rcx, [0+rax*4]
-        mov     rax, QWORD PTR [rbp-48]
-        add     rax, rcx
-        mov     rsi, rdx
-        mov     rdi, rax
+        movq    -24(%rbp), %rax
+        addq    $1, %rax
+        leaq    0(,%rax,4), %rdx
+        movq    -48(%rbp), %rax
+        addq    %rax, %rdx
+        movq    -24(%rbp), %rax
+        leaq    0(,%rax,4), %rcx
+        movq    -48(%rbp), %rax
+        addq    %rcx, %rax
+        movq    %rdx, %rsi
+        movq    %rax, %rdi
         call    swap
 .L7:
-        add     QWORD PTR [rbp-24], 1
+        addq    $1, -24(%rbp)
 .L6:
-        mov     rax, QWORD PTR [rbp-40]
-        sub     rax, 1
-        cmp     QWORD PTR [rbp-24], rax
+        movq    -40(%rbp), %rax
+        subq    $1, %rax
+        cmpq    %rax, -24(%rbp)
         jb      .L8
-        add     QWORD PTR [rbp-16], 1
+        addq    $1, -16(%rbp)
 .L5:
-        mov     rax, QWORD PTR [rbp-40]
-        sub     rax, 1
-        cmp     QWORD PTR [rbp-16], rax
+        movq    -40(%rbp), %rax
+        subq    $1, %rax
+        cmpq    %rax, -16(%rbp)
         jb      .L9
-        mov     QWORD PTR [rbp-32], 0
+        movq    $0, -32(%rbp)
         jmp     .L10
 .L11:
-        mov     rax, QWORD PTR [rbp-32]
-        lea     rdx, [0+rax*4]
-        mov     rax, QWORD PTR [rbp-48]
-        add     rax, rdx
-        mov     eax, DWORD PTR [rax]
-        mov     esi, eax
-        mov     edi, OFFSET FLAT:.LC0
-        mov     eax, 0
+        movq    -32(%rbp), %rax
+        leaq    0(,%rax,4), %rdx
+        movq    -48(%rbp), %rax
+        addq    %rdx, %rax
+        movl    (%rax), %eax
+        movl    %eax, %esi
+        movl    $.LC0, %edi
+        movl    $0, %eax
         call    printf
-        add     QWORD PTR [rbp-32], 1
+        addq    $1, -32(%rbp)
 .L10:
-        mov     rax, QWORD PTR [rbp-32]
-        cmp     rax, QWORD PTR [rbp-40]
+        movq    -32(%rbp), %rax
+        cmpq    -40(%rbp), %rax
         jb      .L11
-        mov     eax, 0
+        movl    $0, %eax
         leave
         ret
