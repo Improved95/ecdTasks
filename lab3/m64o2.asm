@@ -4,76 +4,79 @@ swap:
         movl    %edx, (%rdi)
         movl    %eax, (%rsi)
         ret
-.LC4:
+.LC0:
         .string "%d "
 main:
+        pushq   %r12
+        movl    $10, %edx
         pushq   %rbp
-        movl    $400, %edi
         pushq   %rbx
-        subq    $8, %rsp
+        movq    8(%rsi), %rdi
+        xorl    %esi, %esi
+        call    strtol
+        movslq  %eax, %r12
+        movq    %rax, %rbx
+        leaq    0(,%r12,4), %rdi
         call    malloc
-        movdqa  .LC0(%rip), %xmm1
-        movdqa  .LC1(%rip), %xmm5
-        movdqa  .LC2(%rip), %xmm4
-        movq    %rax, %r8
         movq    %rax, %rbp
-        leaq    400(%rax), %rbx
-        movdqa  .LC3(%rip), %xmm3
-.L4:
-        movdqa  %xmm1, %xmm0
-        addq    $16, %rax
-        paddq   %xmm5, %xmm1
-        movdqa  %xmm0, %xmm2
-        paddq   %xmm4, %xmm2
-        shufps  $136, %xmm2, %xmm0
-        movdqa  %xmm3, %xmm2
-        psubd   %xmm0, %xmm2
-        movups  %xmm2, -16(%rax)
-        cmpq    %rbx, %rax
-        jne     .L4
-        movl    $99, %edi
-        leaq    396(%r8), %rsi
+        testq   %r12, %r12
+        je      .L13
+        movl    %ebx, %eax
+        xorl    %edx, %edx
 .L5:
-        movq    %r8, %rax
+        movl    %eax, %ecx
+        movq    %rdx, %r8
+        subl    %edx, %ecx
+        movl    %ecx, 0(%rbp,%rdx,4)
+        addq    $1, %rdx
+        cmpq    %rdx, %r12
+        jne     .L5
+        testq   %r8, %r8
+        je      .L21
+.L4:
+        xorl    %edi, %edi
+        leaq    0(%rbp,%r8,4), %rsi
 .L7:
+        movq    %rbp, %rax
+.L9:
         movq    (%rax), %xmm0
-        pshufd  $0xe5, %xmm0, %xmm6
-        movd    %xmm0, %ecx
-        movd    %xmm6, %edx
+        pshufd  $0xe5, %xmm0, %xmm1
+        movd    %xmm0, %edx
+        movd    %xmm1, %ecx
         cmpl    %edx, %ecx
-        jle     .L6
+        jge     .L8
         pshufd  $225, %xmm0, %xmm0
         movq    %xmm0, (%rax)
-.L6:
+.L8:
         addq    $4, %rax
         cmpq    %rsi, %rax
-        jne     .L7
-        subq    $1, %rdi
-        jne     .L5
-.L8:
-        movl    0(%rbp), %esi
-        movl    $.LC4, %edi
+        jne     .L9
+        addq    $1, %rdi
+        cmpq    %r8, %rdi
+        jb      .L7
+        xorl    %ebx, %ebx
+        testq   %r12, %r12
+        je      .L19
+.L11:
+        movl    0(%rbp,%rbx,4), %esi
+        movl    $.LC0, %edi
         xorl    %eax, %eax
-        addq    $4, %rbp
+        addq    $1, %rbx
         call    printf
-        cmpq    %rbx, %rbp
-        jne     .L8
-        addq    $8, %rsp
-        xorl    %eax, %eax
+        cmpq    %r12, %rbx
+        jb      .L11
+.L19:
         popq    %rbx
+        xorl    %eax, %eax
         popq    %rbp
+        popq    %r12
         ret
-.LC0:
-        .quad   0
-        .quad   1
-.LC1:
-        .quad   4
-        .quad   4
-.LC2:
-        .quad   2
-        .quad   2
-.LC3:
-        .long   100
-        .long   100
-        .long   100
-        .long   100
+.L13:
+        orq     $-1, %r8
+        jmp     .L4
+.L21:
+        movl    0(%rbp), %esi
+        movl    $.LC0, %edi
+        xorl    %eax, %eax
+        call    printf
+        jmp     .L19

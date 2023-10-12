@@ -25,7 +25,15 @@ main:
         movl    %esp, %ebp
         pushl   %ecx
         subl    $36, %esp
-        movl    $100, -28(%ebp)
+        movl    %ecx, %eax
+        movl    4(%eax), %eax
+        addl    $4, %eax
+        movl    (%eax), %eax
+        subl    $12, %esp
+        pushl   %eax
+        call    atoi
+        addl    $16, %esp
+        movl    %eax, -28(%ebp)
         movl    -28(%ebp), %eax
         sall    $2, %eax
         subl    $12, %esp

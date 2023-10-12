@@ -24,7 +24,13 @@ main:
         subq    $64, %rsp
         movl    %edi, -52(%rbp)
         movq    %rsi, -64(%rbp)
-        movq    $100, -40(%rbp)
+        movq    -64(%rbp), %rax
+        addq    $8, %rax
+        movq    (%rax), %rax
+        movq    %rax, %rdi
+        call    atoi
+        cltq
+        movq    %rax, -40(%rbp)
         movq    -40(%rbp), %rax
         salq    $2, %rax
         movq    %rax, %rdi
