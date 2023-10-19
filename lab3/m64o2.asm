@@ -1,82 +1,82 @@
 swap:
-        movl    (%rdi), %eax
-        movl    (%rsi), %edx
-        movl    %edx, (%rdi)
-        movl    %eax, (%rsi)
-        ret
-.LC0:
-        .string "%d "
+    movl    (%rdi), %eax       ; Загрузить значение, на которое указывает rdi, в eax (a)
+    movl    (%rsi), %edx       ; Загрузить значение, на которое указывает rsi, в edx (b)
+    movl    %edx, (%rdi)       ; Сохранить b в адрес, на который указывает rdi (a = b)
+    movl    %eax, (%rsi)       ; Сохранить a в адрес, на который указывает rsi (b = a)
+    ret
 main:
-        pushq   %r12
-        movl    $10, %edx
-        pushq   %rbp
-        pushq   %rbx
-        movq    8(%rsi), %rdi
-        xorl    %esi, %esi
-        call    strtol
-        movslq  %eax, %r12
-        movq    %rax, %rbx
-        leaq    0(,%r12,4), %rdi
-        call    malloc
-        movq    %rax, %rbp
-        testq   %r12, %r12
-        je      .L13
-        movl    %ebx, %eax
-        xorl    %edx, %edx
+    pushq   %r12                ; Резервируем место для регистра r12
+    movl    $10, %edx           ; Загружаем 10 в edx (основание конвертации)
+    pushq   %rbp                ; Сохраняем регистр rbp
+    pushq   %rbx                ; Сохраняем регистр rbx
+    movq    8(%rsi), %rdi       ; Загружаем адрес второго аргумента (строку) в rdi
+    xorl    %esi, %esi          ; Обнуляем esi (нужно для strtol)
+    call    strtol              ; Вызов функции strtol для преобразования строки в число
+    movslq  %eax, %r12          ; Знаковое расширение 32-битного результата в r12
+    movq    %rax, %rbx          ; Сохраняем значение результата в rbx
+    leaq    0(,%r12,4), %rdi   ; Вычисляем количество элементов массива (n * 4) и загружаем в rdi
+    call    malloc              ; Вызов функции malloc для выделения памяти под массив
+    movq    %rax, %rbp          ; Сохраняем адрес выделенной памяти (указатель на начало массива) в rbp
+    testq   %r12, %r12          ; Проверка, является ли n (r12) нулем
+    je      .L13                ; Если n = 0, перейти к .L13 (пустой массив)
+    movl    %ebx, %eax           ; Загружаем значение rbx (длина массива) в eax
+    xorl    %edx, %edx           ; Обнуляем edx (счетчик внешнего цикла)
 .L5:
-        movl    %eax, %ecx
-        movq    %rdx, %r8
-        subl    %edx, %ecx
-        movl    %ecx, 0(%rbp,%rdx,4)
-        addq    $1, %rdx
-        cmpq    %rdx, %r12
-        jne     .L5
-        testq   %r8, %r8
-        je      .L21
+    movl    %eax, %ecx           ; Копируем значение длины массива в ecx (счетчик внутреннего цикла)
+    movq    %rdx, %r8            ; Копируем значение счетчика в r8 (временный регистр)
+    subl    %edx, %ecx            ; Вычисляем количество итераций внутреннего цикла (n - i)
+    movl    %ecx, 0(%rbp,%rdx,4) ; Сохраняем текущее значение i в массив (arr[i] = n - i)
+    addq    $1, %rdx             ; Увеличиваем счетчик внешнего цикла
+    cmpq    %rdx, %r12           ; Сравниваем i с n (r12)
+    jne     .L5                   ; Если i < n, продолжаем внешний цикл
+    testq   %r8, %r8              ; Проверка, был ли внутренний цикл пустым (i == n)
+    je      .L21                  ; Если внутренний цикл пустой, перейти к .L21 (конец программы)
 .L4:
-        xorl    %edi, %edi
-        leaq    0(%rbp,%r8,4), %rsi
+    xorl    %edi, %edi            ; Обнуляем edi (счетчик внутреннего цикла)
+    leaq    0(%rbp,%r8,4), %rsi   ; Вычисляем адрес начала массива (arr) + r8 * 4 и загружаем в rsi
 .L7:
-        movq    %rbp, %rax
+    movq    %rbp, %rax            ; Загружаем текущий адрес arr в rax
 .L9:
-        movq    (%rax), %xmm0
-        pshufd  $0xe5, %xmm0, %xmm1
-        movd    %xmm0, %edx
-        movd    %xmm1, %ecx
-        cmpl    %edx, %ecx
-        jge     .L8
-        pshufd  $225, %xmm0, %xmm0
-        movq    %xmm0, (%rax)
+    movq    (%rax), %xmm0         ; Загружаем значение по адресу arr в xmm0
+    pshufd  $0xe5, %xmm0, %xmm1    ; Извлекаем 4-й элемент из xmm0 и загружаем в xmm1
+    movd    %xmm0, %edx           ; Перемещаем xmm0 в edx (4-й элемент)
+    movd    %xmm1, %ecx           ; Перемещаем xmm1 в ecx (4-й элемент)
+    cmpl    %edx, %ecx            ; Сравниваем 4-й элемент
+    jge     .L8                    ; Если значение извлеченного элемента >= 4-му элементу, переходим к .L8
+    pshufd  $225, %xmm0, %xmm0     ; Заново упорядочиваем элементы xmm0
+    movq    %xmm0, (%rax)         ; Сохраняем обновленное значение обратно по адресу
 .L8:
-        addq    $4, %rax
-        cmpq    %rsi, %rax
-        jne     .L9
-        addq    $1, %rdi
-        cmpq    %r8, %rdi
-        jb      .L7
-        xorl    %ebx, %ebx
-        testq   %r12, %r12
-        je      .L19
+    addq    $4, %rax              ; Увеличиваем указатель на 4 байта (двигаемся к следующему элементу)
+    cmpq    %rsi, %rax            ; Сравниваем с конечным адресом массива
+    jne     .L9                    ; Если не достигнут конец массива, продолжаем
+    addq    $1, %rdi               ; Увеличиваем счетчик внутреннего цикла
+    cmpq    %r8, %rdi              ; Сравниваем с r8 (количество элементов в массиве)
+    jb      .L7                    ; Если не достигнут конец массива, продолжаем
+    xorl    %ebx, %ebx              ; Обнуляем ebx (результат printf)
+    testq   %r12, %r12              ; Проверка, был ли внутренний цикл пустым (n == 0)
+    je      .L19                    ; Если n = 0, перейти к .L19
 .L11:
-        movl    0(%rbp,%rbx,4), %esi
-        movl    $.LC0, %edi
-        xorl    %eax, %eax
-        addq    $1, %rbx
-        call    printf
-        cmpq    %r12, %rbx
-        jb      .L11
+    movl    0(%rbp,%rbx,4), %esi    ; Загружаем arr[i] в esi
+    movl    $.LC0, %edi             ; Загружаем адрес формата строки в edi
+    xorl    %eax, %eax               ; Обнуляем eax (результат функции printf)
+    addq    $1, %rbx                ; Увеличиваем счетчик (i)
+    call    printf                  ; Вызов функции printf
+    cmpq    %r12, %rbx              ; Сравниваем с n (r12)
+    jb      .L11                    ; Если i < n, продолжаем цикл
 .L19:
-        popq    %rbx
-        xorl    %eax, %eax
-        popq    %rbp
-        popq    %r12
-        ret
+    popq    %rbx                    ; Восстанавливаем rbx
+    xorl    %eax, %eax              ; Обнуляем eax (результат функции main)
+    popq    %rbp                    ; Восстанавливаем rbp
+    popq    %r12                    ; Восстанавливаем r12
+    ret
+
 .L13:
-        orq     $-1, %r8
-        jmp     .L4
+    orq     $-1, %r8                ; Заполняем r8 всеми битами 1 (количество элементов = 2^64 - 1)
+    jmp     .L4                      ; Переходим к .L4
+
 .L21:
-        movl    0(%rbp), %esi
-        movl    $.LC0, %edi
-        xorl    %eax, %eax
-        call    printf
-        jmp     .L19
+    movl    0(%rbp), %esi           ; Загружаем первый элемент массива в esi
+    movl    $.LC0, %edi             ; Загружаем адрес формата строки в edi
+    xorl    %eax, %eax               ; Обнуляем eax (результат функции printf)
+    call    printf                  ; Вызов функции printf
+    jmp     .L19                    ; Переходим к .L19
