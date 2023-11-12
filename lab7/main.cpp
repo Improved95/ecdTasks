@@ -3,7 +3,7 @@
 #include <vector>
 
 #define M 10
-#define N 3
+#define N 2048
 
 using namespace std;
 using std::vector;
