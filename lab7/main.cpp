@@ -1,101 +1,155 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
-#define N 10
+
 #define M 10
+#define N 3
 
 using namespace std;
 using std::vector;
 
-void matrixSum (float (&a)[N][N], float (&b)[N][N]) {
-    for (size_t i = 0; i < N; i++) {
-        for (size_t j = 0; j < N; j++) {
-            a[i][j] += b[i][j];
-        }
-    }
-}
+class Matrix {
+    float **array;
 
-void matrixMul(float (&a)[N][N], float (&b)[N][N]) {
-    vector<float> resV(N);
-    for (size_t i = 0; i < N; i++) {
-        for (size_t j = 0; j < N; j++) {
-            float res = 0;
-            for (size_t k = 0; k < N; k++) {
-                res += a[i][k] * b[k][j];
+public:
+    Matrix() {
+        array = new float*[N];
+        for (size_t i = 0; i < N; i++) {
+            array[i] = new float[N];
+        }
+        for (size_t i = 0; i < N; i++) {
+            for (size_t j = 0; j < N; j++) {
+                array[i][j] = 0;
             }
-            resV.push_back(res);
-        }
-        for (size_t t = 0; t < N; t++) {
-            a[i][t] = resV[t];
         }
     }
-}
+    ~Matrix() {
+        for (size_t i = 0; i < N; i++) {
+            delete array[i];
+        }
+        delete[] array;
+    }
 
-void matrixDiv(float (&a)[N][N], float b) {
-    for (size_t i = 0; i < N; i++) {
-        for (size_t j = 0; j < N; j++) {
-            a[i][j] /= b;
-        }
+    float * operator[](const size_t i) {
+        return array[i];
     }
-}
+    float * operator[](const size_t i) const {
+        return array[i];
+    }
 
-float maxSumRows(float (&a)[N][N]) {
-    float maxSum = 0;
-    for (size_t i = 0; i < N; i++) {
-        float sum = 0;
-        for (size_t j = 0; j < N; j++) {
-            sum += a[i][j];
-        }
-        if (sum > maxSum) {
-            maxSum = sum;
+    void operator=(const Matrix &other) {
+        for (size_t i = 0; i < N; i++) {
+            for (size_t j = 0; j < N; j++) {
+                (*this)[i][j] = other[i][j];
+            }
         }
     }
-    return maxSum;
-}
 
-float maxSumColumns(float (&a)[N][N]) {
-    float maxSum = 0;
-    for (size_t i = 0; i < N; i++) {
-        float sum = 0;
-        for (size_t j = 0; j < N; j++) {
-            sum += a[j][i];
+    Matrix operator+(const Matrix &a) {
+        Matrix temp;
+        for (size_t i = 0; i < N; i++) {
+            for (size_t j = 0; j < N; j++) {
+                temp[i][j] = (*this)[i][j] + a[i][j];
+            }
         }
-        if (sum > maxSum) {
-            maxSum = sum;
-        }
+        return temp;
     }
-    return maxSum;
-}
+
+    Matrix operator-(const Matrix &a) {
+        Matrix temp;
+        for (size_t i = 0; i < N; i++) {
+            for (size_t j = 0; j < N; j++) {
+                temp[i][j] = (*this)[i][j] - a[i][j];
+            }
+        }
+        return temp;
+    }
+
+    Matrix operator*(const Matrix &a) {
+        Matrix temp;
+        vector<float> resV;
+        for (size_t i = 0; i < N; i++) {
+            float res = 0;
+            for (size_t j = 0; j < N; j++) {
+                for (size_t k = 0; k < N; k++) {
+                    res += (*this)[i][k] * a[k][j];
+                }
+                temp[i][j] = res;
+            }
+        }
+        return temp;
+    }
+
+    Matrix operator/(const float a) {
+        Matrix temp;
+        for (size_t i = 0; i < N; i++) {
+            for (size_t j = 0; j < N; j++) {
+                temp[i][j] = (*this)[i][j] / (float)a;
+            }
+        }
+        return temp;
+    }
+
+    float maxSumRows() {
+        float maxSum = 0;
+        for (size_t i = 0; i < N; i++) {
+            float sum = 0;
+            for (size_t j = 0; j < N; j++) {
+                sum += (*this)[i][j];
+            }
+            if (sum > maxSum) {
+                maxSum = sum;
+            }
+        }
+        return maxSum;
+    }
+
+    float maxSumColumns() {
+        float maxSum = 0;
+        for (size_t i = 0; i < N; i++) {
+            float sum = 0;
+            for (size_t j = 0; j < N; j++) {
+                sum += (*this)[j][i];
+            }
+            if (sum > maxSum) {
+                maxSum = sum;
+            }
+        }
+        return maxSum;
+    }
+};
 
 int main() {
     srand(100);
-    float matrix[N][N];
-    float matrixT[N][N];
-    float matrixE[N][N];
-    float matrixF[N][N];
+
+    Matrix ma, mt, me;
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
-            float a = rand() / (float)rand();
-            matrix[i][j] = a;
-            matrixT[j][i] = a;
-            matrixE[i][j] = 0;
-            matrixF[i][j] = 0;
+            float a = (float)(rand() % 100) / (float)(rand() % 100) * 100;
+            ma[i][j] = a;
+            mt[j][i] = a;
+            me[i][j] = 0;
         }
-        matrixE[i][i] = 1;
+        me[i][i] = 1;
     }
 
-
-    matrixSum(matrixF, matrixE);
-    for (size_t i = 0; i < M - 1; i++) {
-        // matrixSum(matrixF, )
+    Matrix mf;
+    mf = me;
+    for (size_t i = 1; i < M; i++) {
+        Matrix mb = mt / (ma.maxSumRows() * ma.maxSumColumns());
+        Matrix mr = me - (mb * ma);
+        for (size_t j = 1; j < i; j++) {
+            mr = mr * mr;
+        }
+        mf = mf + mr;
     }
+
+     for (size_t i = 0; i < N; i++) {
+         for (size_t j = 0; j < N; j++) {
+             cout << mf[i][j] << " ";
+         }
+         cout << endl;
+     }
 
     return 0;
 }
-
-/*for (size_t i = 0; i < N; i++) {
-    for (size_t j = 0; j < N; j++) {
-           cout << matrixF[i][j] << " ";
-    }
-    cout << endl;
-}*/
