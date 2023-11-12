@@ -7,7 +7,7 @@
 using namespace std;
 using std::vector;
 
-void matrixSum (float **a, float **b) {
+void matrixSum (float (&a)[N][N], float (&b)[N][N]) {
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
             a[i][j] += b[i][j];
@@ -15,7 +15,7 @@ void matrixSum (float **a, float **b) {
     }
 }
 
-void matrixMul(float **a, float **b) {
+void matrixMul(float (&a)[N][N], float (&b)[N][N]) {
     vector<float> resV(N);
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
@@ -31,7 +31,7 @@ void matrixMul(float **a, float **b) {
     }
 }
 
-void matrixDiv(float **a, float b) {
+void matrixDiv(float (&a)[N][N], float b) {
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
             a[i][j] /= b;
@@ -39,7 +39,7 @@ void matrixDiv(float **a, float b) {
     }
 }
 
-float maxSumRows(float **a) {
+float maxSumRows(float (&a)[N][N]) {
     float maxSum = 0;
     for (size_t i = 0; i < N; i++) {
         float sum = 0;
@@ -53,7 +53,7 @@ float maxSumRows(float **a) {
     return maxSum;
 }
 
-float maxSumColumns(float **a) {
+float maxSumColumns(float (&a)[N][N]) {
     float maxSum = 0;
     for (size_t i = 0; i < N; i++) {
         float sum = 0;
@@ -69,21 +69,13 @@ float maxSumColumns(float **a) {
 
 int main() {
     srand(100);
-    
-    float **matrix = new float*[N];
-    float **matrixT = new float*[N];
-    float **matrixE = new float*[N];
-    float **matrixF = new float*[N];
-    for (size_t i = 0; i < N; i++) {
-        matrix[i] = new float[N];
-        matrixT[i] = new float[N];
-        matrixE[i] = new float[N];
-        matrixF[i] = new float[N];
-    }
-
+    float matrix[N][N];
+    float matrixT[N][N];
+    float matrixE[N][N];
+    float matrixF[N][N];
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
-            float a = rand() / (int)rand();
+            float a = rand() / (float)rand();
             matrix[i][j] = a;
             matrixT[j][i] = a;
             matrixE[i][j] = 0;
@@ -91,19 +83,13 @@ int main() {
         }
         matrixE[i][i] = 1;
     }
-    
+
+
     matrixSum(matrixF, matrixE);
     for (size_t i = 0; i < M - 1; i++) {
         // matrixSum(matrixF, )
     }
 
-    for (size_t i = 0; i < N; i++) {
-        delete matrix[i];
-        delete matrixT[i];
-        delete matrixE[i];
-        delete matrixF[i];
-    }
-    delete[] matrix;
     return 0;
 }
 
