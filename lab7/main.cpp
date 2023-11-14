@@ -2,13 +2,14 @@
 #include <ctime>
 #include <vector>
 
-#define M 10
-#define N 2048
+#define M 1000
+#define N 3
 
 using namespace std;
 using std::vector;
 
 class Matrix {
+private:
     float **array;
 
 public:
@@ -37,42 +38,50 @@ public:
         return array[i];
     }
 
-    void operator=(const Matrix &other) {
+    Matrix(const Matrix &source) {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                (*this)[i][j] = other[i][j];
+                (*this)[i][j] = source[i][j];
             }
         }
     }
 
-    Matrix operator+(const Matrix &a) {
+    void operator=(const Matrix &source) {
+        for (size_t i = 0; i < N; i++) {
+            for (size_t j = 0; j < N; j++) {
+                (*this)[i][j] = source[i][j];
+            }
+        }
+    }
+
+    Matrix operator+(const Matrix &source) {
         Matrix temp;
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] + a[i][j];
+                temp[i][j] = (*this)[i][j] + source[i][j];
             }
         }
         return temp;
     }
 
-    Matrix operator-(const Matrix &a) {
+    Matrix operator-(const Matrix &source) {
         Matrix temp;
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] - a[i][j];
+                temp[i][j] = (*this)[i][j] - source[i][j];
             }
         }
         return temp;
     }
 
-    Matrix operator*(const Matrix &a) {
+    Matrix operator*(const Matrix &source) {
         Matrix temp;
         vector<float> resV;
         for (size_t i = 0; i < N; i++) {
-            float res = 0;
             for (size_t j = 0; j < N; j++) {
+                float res = 0;
                 for (size_t k = 0; k < N; k++) {
-                    res += (*this)[i][k] * a[k][j];
+                    res += (*this)[i][k] * source[k][j];
                 }
                 temp[i][j] = res;
             }
@@ -80,11 +89,11 @@ public:
         return temp;
     }
 
-    Matrix operator/(const float a) {
+    Matrix operator/(const float source) {
         Matrix temp;
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] / (float)a;
+                temp[i][j] = (*this)[i][j] / (float)source;
             }
         }
         return temp;
@@ -117,6 +126,16 @@ public:
         }
         return maxSum;
     }
+
+    void coutMatrix() {
+        for (size_t i = 0; i < N; i++) {
+            for (size_t j = 0; j < N; j++) {
+                cout << array[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
 };
 
 int main() {
@@ -125,7 +144,7 @@ int main() {
     Matrix ma, mt, me;
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
-            float a = (float)(rand() % 100) / (float)(rand() % 100) * 100;
+            float a = rand() % 100;
             ma[i][j] = a;
             mt[j][i] = a;
             me[i][j] = 0;
@@ -133,23 +152,21 @@ int main() {
         me[i][i] = 1;
     }
 
-    Matrix mf;
-    mf = me;
-    for (size_t i = 1; i < M; i++) {
-        Matrix mb = mt / (ma.maxSumRows() * ma.maxSumColumns());
-        Matrix mr = me - (mb * ma);
-        for (size_t j = 1; j < i; j++) {
-            mr = mr * mr;
-        }
-        mf = mf + mr;
-    }
+    Matrix mb = mt / (ma.maxSumRows() * ma.maxSumColumns());
+    Matrix mr = me - (mb * ma);
 
-     for (size_t i = 0; i < N; i++) {
-         for (size_t j = 0; j < N; j++) {
-             cout << mf[i][j] << " ";
-         }
-         cout << endl;
-     }
+    Matrix mo, mrc;
+    mrc = mr;
+
+    mo = me;
+    for (size_t i = 1; i < M + 1; i++) {
+        mo = mo + mr;
+        mr = mr * mrc;
+    }
+    mo = mo * mb;
+
+    ma.coutMatrix();
+    mo.coutMatrix();
 
     return 0;
 }
