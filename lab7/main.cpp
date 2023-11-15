@@ -1,9 +1,10 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
+#include <immintrin.h>
 
 #define M 1000
-#define N 3
+#define N 80
 
 using namespace std;
 using std::vector;
@@ -15,16 +16,20 @@ private:
 public:
     Matrix() {
         array = new float*[N];
+        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             array[i] = new float[N];
         }
+        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
+            #pragma omp parallel for
             for (size_t j = 0; j < N; j++) {
                 array[i][j] = 0;
             }
         }
     }
     ~Matrix() {
+        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             delete array[i];
         }
@@ -38,15 +43,16 @@ public:
         return array[i];
     }
 
-    Matrix(const Matrix &source) {
+    /*Matrix(const Matrix &source) {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
                 (*this)[i][j] = source[i][j];
             }
         }
-    }
+    }*/
 
     void operator=(const Matrix &source) {
+        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
                 (*this)[i][j] = source[i][j];
@@ -56,6 +62,7 @@ public:
 
     Matrix operator+(const Matrix &source) {
         Matrix temp;
+        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
                 temp[i][j] = (*this)[i][j] + source[i][j];
@@ -66,6 +73,7 @@ public:
 
     Matrix operator-(const Matrix &source) {
         Matrix temp;
+        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
                 temp[i][j] = (*this)[i][j] - source[i][j];
@@ -91,6 +99,7 @@ public:
 
     Matrix operator/(const float source) {
         Matrix temp;
+        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
                 temp[i][j] = (*this)[i][j] / (float)source;
@@ -140,7 +149,6 @@ public:
 
 int main() {
     srand(100);
-
     Matrix ma, mt, me;
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
