@@ -29,22 +29,22 @@ int main(int argc, char *argv[]) {
         cvtColor(frame, grayFrame, COLOR_BGR2GRAY);
 
         // Преобразуем в цветовое пространство HSV
-        // Mat hsvFrame;
-        // cvtColor(frame, hsvFrame, COLOR_BGR2HSV);
+        Mat hsvFrame;
+        cvtColor(frame, hsvFrame, COLOR_BGR2HSV);
 
         // Применяем Gaussian blur
         // Mat blurredFrame;
         // GaussianBlur(frame, blurredFrame, Size(0, 0), 3);
 
-        // resize(hsvFrame, hsvFrame, grayFrame.size());
-        // resize(hsvFrame, hsvFrame, grayFrame.size());
-        // resize(blurredFrame, blurredFrame, grayFrame.size());
+        resize(grayFrame, grayFrame, frame.size());
+        resize(hsvFrame, hsvFrame, frame.size());
+        // resize(blurredFrame, blurredFrame, frame.size());
         
-        // addWeighted(grayFrame, 0.5, hsvFrame, 0.5, 1, hsvFrame);
+        addWeighted(grayFrame, 0.5, hsvFrame, 0.5, 1, frame);
         // resize(finalFrame, finalFrame, grayFrame.size());
         // addWeighted(finalFrame, 0.7, blurredFrame, 0.3, 0, finalFrame);
 
-        imshow("Camera", grayFrame);
+        imshow("Camera", frame);
         // imshow("Camera", hsvFrame);
         if (waitKey(30) >= 0) {
             break;
