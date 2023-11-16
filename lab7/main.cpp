@@ -2,12 +2,17 @@
 #include <ctime>
 #include <vector>
 #include <immintrin.h>
+#include <cblas.h>
 
 #define M 1000
 #define N 3
 
 using namespace std;
 using std::vector;
+
+void AVX2_Add(float* res, const float* a, const float* b, size_t size);
+void AVX2_Sub(float* res, const float* a, const float* b, size_t size);
+void AVX2_Div(float* res, const float* a, const float b, size_t size);
 
 class Matrix {
 private:
@@ -56,9 +61,7 @@ public:
         Matrix temp;
         #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] + source[i][j];
-            }
+            AVX2_Add(temp[i], (*this)[i], source[i], N);
         }
         return temp;
     }
@@ -67,9 +70,7 @@ public:
         Matrix temp;
         #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] - source[i][j];
-            }
+            AVX2_Sub(temp[i], (*this)[i], source[i], N);
         }
         return temp;
     }
@@ -89,13 +90,11 @@ public:
         return temp;
     }
 
-    Matrix operator/(const float source) {
+    Matrix operator/(const float divisor) {
         Matrix temp;
         #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] / (float)source;
-            }
+            AVX2_Div(temp[i], (*this)[i], (float)divisor, N);
         }
         return temp;
     }
@@ -139,6 +138,59 @@ public:
     }
 };
 
+void AVX2_Add(float* res, const float* a, const float* b, size_t size) {
+    size_t i = 0;
+    if (size >= 8) {
+        size_t aligned_size = size - size % 8;
+
+        for (; i < aligned_size; i += 4) {
+            __m128 va = _mm_loadu_ps(&a[i]);
+            __m128 vb = _mm_loadu_ps(&b[i]);
+            __m128 vres = _mm_add_ps(va, vb);
+            _mm_storeu_ps(&res[i], vres);
+        }
+    }
+
+    for (; i < size; ++i) {
+        res[i] = a[i] + b[i];
+    }
+}
+
+void AVX2_Sub(float* res, const float* a, const float* b, size_t size) {
+    size_t i = 0;
+    if (size >= 8) {
+        size_t aligned_size = size - size % 8;
+
+        for (; i < aligned_size; i += 4) {
+            __m128 va = _mm_loadu_ps(&a[i]);
+            __m128 vb = _mm_loadu_ps(&b[i]);
+            __m128 vres = _mm_sub_ps(va, vb);
+            _mm_storeu_ps(&res[i], vres);
+        }
+    }
+
+    for (; i < size; ++i) {
+        res[i] = a[i] - b[i];
+    }
+}
+
+void AVX2_Div(float* res, const float* a, const float b, size_t size) {
+    size_t i = 0;
+    if (size >= 8) {
+        size_t aligned_size = size - size % 8;
+
+        for (; i < aligned_size; i += 4) {
+            __m128 va = _mm_loadu_ps(&a[i]);
+            __m128 vres = _mm_div_ps(va, _mm_set1_ps(b));
+            _mm_storeu_ps(&res[i], vres);
+        }
+    }
+
+    for (; i < size; ++i) {
+        res[i] = a[i] / b;
+    }
+}
+
 int main() {
     srand(100);
     Matrix ma, mt, me;
@@ -165,12 +217,14 @@ int main() {
     }
     mo = mo * mb;
 
-    // ma.coutMatrix();
-    // mo.coutMatrix();
+    ma.coutMatrix();
+    mo.coutMatrix();
 
-    if (__builtin_cpu_supports("avx2")) {
-        cout << "work" << endl;
-    }
+    /*ma.coutMatrix();
+    me.coutMatrix();
+
+    Matrix mf = ma + me;
+    mf.coutMatrix();*/
 
     return 0;
 }
