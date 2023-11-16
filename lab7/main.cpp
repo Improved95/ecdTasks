@@ -43,14 +43,6 @@ public:
         return array[i];
     }
 
-    /*Matrix(const Matrix &source) {
-        for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                (*this)[i][j] = source[i][j];
-            }
-        }
-    }*/
-
     void operator=(const Matrix &source) {
         #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
