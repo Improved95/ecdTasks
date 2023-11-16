@@ -4,7 +4,7 @@
 #include <immintrin.h>
 
 #define M 1000
-#define N 80
+#define N 3
 
 using namespace std;
 using std::vector;
@@ -165,8 +165,12 @@ int main() {
     }
     mo = mo * mb;
 
-    ma.coutMatrix();
-    mo.coutMatrix();
+    // ma.coutMatrix();
+    // mo.coutMatrix();
+
+    if (__builtin_cpu_supports("avx2")) {
+        cout << "work" << endl;
+    }
 
     return 0;
 }
