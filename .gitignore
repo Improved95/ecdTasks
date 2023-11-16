@@ -38,3 +38,5 @@ out
 CMakeSettings.json
 **idea
 **cmake-build-debug
+**openBLAS
+**openBLAS_lib
