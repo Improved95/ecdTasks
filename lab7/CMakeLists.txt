@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 project(lab7)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} src/vectorize.cpp)
 target_link_libraries(${PROJECT_NAME} blas)

@@ -2,10 +2,10 @@
 #include <ctime>
 #include <vector>
 #include <immintrin.h>
-#include <cblas.h>
+// #include <cblas.h>
 
 #define M 1000
-#define N 3
+#define N 90
 
 using namespace std;
 using std::vector;
@@ -226,20 +226,7 @@ int main() {
     Matrix mf = ma + me;
     mf.coutMatrix();*/
 
-    double A[N * N] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
-    double B[N * N] = {9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0};
-    double C[N * N] = {0.0};
-
-    // Умножение матриц C = A * B
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, A, N, B, N, 0.0, C, N);
-
-    // Вывод результата
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            std::cout << C[i * N + j] << " ";
-        }
-        std::cout << std::endl;
-    }
-
     return 0;
 }
+
+// cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, A, N, B, N, 0.0, C, N);
