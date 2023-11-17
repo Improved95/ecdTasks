@@ -65,9 +65,24 @@ public:
         vector<float> resV;
         for (size_t i = 0; i < N; i++) {
             for (size_t k = 0; k < N; k++) {
-                for (size_t j = 0; j < N; j++) {
+                float res = 0;
+                size_t j = 0;
+                if (N >= 8) {
+                    size_t aligned_size = N - N % 8;
+                    for (; j < N; j += 4) {
+                        __m128 vt = _mm_set1_ps((*this)[i][k]);
+                        __m128 vs = _mm_loadu_ps(source[k]);
+                        __m128 vres = _mm_mul_ps(vs, vt);
+                        __m128 sum_res_v = _mm_hadd_ps(vres, vres);
+                        float sum_res; 
+                        _mm_store_ss(&sum_res, sum_res_v);
+                        res += sum_res;
+                    }
+                }
+                for (; j < N; j++) {
                     temp[i][k] += (*this)[i][k] * source[k][j];
                 }
+                temp[i][k] += res;
             }
         }
         return temp;
