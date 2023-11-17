@@ -16,36 +16,21 @@ void AVX2_Div(float* res, const float* a, const float b, size_t size);
 
 class Matrix {
 private:
-    float **array;
+    float *array;
 
 public:
     Matrix() {
-        array = new float*[N];
-        #pragma omp parallel for
-        for (size_t i = 0; i < N; i++) {
-            array[i] = new float[N];
-        }
-        #pragma omp parallel for
-        for (size_t i = 0; i < N; i++) {
-            #pragma omp parallel for
-            for (size_t j = 0; j < N; j++) {
-                array[i][j] = 0;
-            }
-        }
+        array = new float[N * N];
     }
     ~Matrix() {
-        #pragma omp parallel for
-        for (size_t i = 0; i < N; i++) {
-            delete array[i];
-        }
-        delete[] array;
+        delete array;
     }
 
     float * operator[](const size_t i) {
-        return array[i];
+        return array + i;
     }
     float * operator[](const size_t i) const {
-        return array[i];
+        return array + i;
     }
 
     void operator=(const Matrix &source) {
@@ -128,7 +113,7 @@ public:
     void coutMatrix() {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                cout << array[i][j] << " ";
+                cout << (*this)[i][j] << " ";
             }
             cout << endl;
         }
