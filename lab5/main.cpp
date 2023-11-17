@@ -14,40 +14,33 @@ int main(int argc, char *argv[]) {
     size_t tickCount = 0;
 
     while (true) {
+        size_t tickCountSaveForFps = tickCountSave;
         capture.read(frame);
+        putText(frame, "Time on out frame: " + to_string(time) + "s", Point(5, 50), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+
         tickCount = getTickCount();
         time = (tickCount - tickCountSave) / (double)getTickFrequency();
-        putText(frame, "Read Time: " + to_string(time) + "s", Point(5, 35), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+        putText(frame, "Time on read frame: " + to_string(time) + "s", Point(5, 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+        tickCountSave = tickCount;
         if (frame.empty()) {
             break;
         }
 
+        cvtColor(frame, frame, COLOR_BGR2GRAY);
         tickCount = getTickCount();
-        tick = (tickCount - tickCountSave) / (double)getTickFrequency();
-        putText(frame, "FPS: " + to_string((int)(1 / time)), Point(5, 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+        time = (tickCount - tickCountSave) / (double)getTickFrequency();
+        putText(frame, "Time on convert color: " + to_string(time) + "s", Point(5, 35), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
         tickCountSave = tickCount;
 
-        Mat grayFrame;
-        cvtColor(frame, grayFrame, COLOR_BGR2GRAY);
+        size_t tickCountForFPS = getTickCount();
+        time = (tickCountForFPS - tickCountSaveForFps) / (double)getTickFrequency();
+        putText(frame, "FPS: " + to_string(1 / time) + "s", Point(5, 65), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
 
-        // Преобразуем в цветовое пространство HSV
-        // Mat hsvFrame;
-        // cvtColor(frame, hsvFrame, COLOR_BGR2HSV);
-
-        // Применяем Gaussian blur
-        // Mat blurredFrame;
-        // GaussianBlur(frame, blurredFrame, Size(0, 0), 3);
-
-        // resize(hsvFrame, hsvFrame, grayFrame.size());
-        // resize(hsvFrame, hsvFrame, grayFrame.size());
-        // resize(blurredFrame, blurredFrame, grayFrame.size());
-        
-        // addWeighted(grayFrame, 0.5, hsvFrame, 0.5, 1, hsvFrame);
-        // resize(finalFrame, finalFrame, grayFrame.size());
-        // addWeighted(finalFrame, 0.7, blurredFrame, 0.3, 0, finalFrame);
-
-        imshow("Camera", grayFrame);
-        // imshow("Camera", hsvFrame);
+        imshow("Camera", frame);
+        tickCount = getTickCount();
+        time = (tickCount - tickCountSave) / (double)getTickFrequency();
+        putText(frame, "Time on out frame: " + to_string(time) + "s", Point(5, 50), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+        tickCountSave = tickCount;
         if (waitKey(30) >= 0) {
             break;
         }
