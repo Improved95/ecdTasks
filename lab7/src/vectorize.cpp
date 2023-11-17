@@ -16,36 +16,21 @@ void AVX2_Div(float* res, const float* a, const float b, size_t size);
 
 class Matrix {
 private:
-    float **array;
+    float *array;
 
 public:
     Matrix() {
-        array = new float*[N];
-        #pragma omp parallel for
-        for (size_t i = 0; i < N; i++) {
-            array[i] = new float[N];
-        }
-        #pragma omp parallel for
-        for (size_t i = 0; i < N; i++) {
-            #pragma omp parallel for
-            for (size_t j = 0; j < N; j++) {
-                array[i][j] = 0;
-            }
-        }
+        array = new float[N * N];
     }
     ~Matrix() {
-        #pragma omp parallel for
-        for (size_t i = 0; i < N; i++) {
-            delete array[i];
-        }
-        delete[] array;
+        delete array;
     }
 
     float * operator[](const size_t i) {
-        return array[i];
+        return (array + i);
     }
     float * operator[](const size_t i) const {
-        return array[i];
+        return (array + i);
     }
 
     void operator=(const Matrix &source) {
@@ -127,7 +112,7 @@ public:
     void coutMatrix() {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                cout << array[i][j] << " ";
+                cout << array[i * N + j] << " ";
             }
             cout << endl;
         }
@@ -214,14 +199,13 @@ int main() {
     }
     mo = mo * mb;
 
+    // ma.coutMatrix();
+    // mo.coutMatrix();
+
     ma.coutMatrix();
-    mo.coutMatrix();
 
-    /*ma.coutMatrix();
-    me.coutMatrix();
-
-    Matrix mf = ma + me;
-    mf.coutMatrix();*/
+    // Matrix ma2 = ma * ma;
+    // ma2.coutMatrix();
 
     return 0;
 }
@@ -230,3 +214,27 @@ int main() {
 // 0.00529352 0.00985796 -0.007962 
 // -0.0121013 0.00514698 0.010341 
 // 0.0101311 -0.00505653 0.00390048 
+
+/*Matrix operator*(const Matrix &source) {
+        Matrix temp;
+        for (size_t i = 0; i < N; i++) {
+            for (size_t k = 0; k < N; k++) {
+                size_t j = 0;
+                size_t aligned_size = N - N % 8;
+                if (N >= 8) {
+                    __m128 v_scalar =  _mm_set1_ps((*this)[i][k]);
+                    for (; j < aligned_size; j += 4) {
+                        __m128 v_source = _mm_loadu_ps(source[k]);
+                        __m128 v_mul = _mm_mul_ps(v_source, v_scalar);
+                        __m128 v_temp = _mm_loadu_ps(&temp[i][j]);
+                        __m128 v_res = _mm_add_ps(v_temp, v_mul);
+                        _mm_storeu_ps(&temp[i][j], v_res);
+                    }
+                }
+                for (; j < N; j++) {
+                    temp[i][j] += (*this)[i][k] * source[k][j];
+                }
+            }
+        }
+        return temp;
+    }*/
