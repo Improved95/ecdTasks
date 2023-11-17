@@ -2,10 +2,10 @@
 #include <ctime>
 #include <vector>
 #include <immintrin.h>
-// #include <cblas.h>
+#include <cblas.h>
 
 #define M 1000
-#define N 90
+#define N 3
 
 using namespace std;
 using std::vector;
@@ -79,12 +79,10 @@ public:
         Matrix temp;
         vector<float> resV;
         for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                float res = 0;
-                for (size_t k = 0; k < N; k++) {
-                    res += (*this)[i][k] * source[k][j];
+            for (size_t k = 0; k < N; k++) {
+                for (size_t j = 0; j < N; j++) {
+                    temp[i][k] += (*this)[i][k] * source[k][j];
                 }
-                temp[i][j] = res;
             }
         }
         return temp;
@@ -230,3 +228,6 @@ int main() {
 }
 
 // cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, A, N, B, N, 0.0, C, N);
+// 0.00529352 0.00985796 -0.007962 
+// -0.0121013 0.00514698 0.010341 
+// 0.0101311 -0.00505653 0.00390048 
