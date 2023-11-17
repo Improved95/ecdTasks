@@ -2,7 +2,7 @@
 #include <cstdio>
 
 void printData(libusb_device *dev) {
-    libusb_device_descriptor desc{}; // дескриптор устройства
+    libusb_device_descriptor desc; // дескриптор устройства
     libusb_device_handle *handle = nullptr; // хэндл устройства
     unsigned char str[256]; // строка для хранения серийного номера
 
@@ -16,15 +16,17 @@ void printData(libusb_device *dev) {
 
     libusb_open(dev, &handle);
     if (handle && desc.iSerialNumber) {
-        r = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, str, sizeof(str));
-        if (r > 0)
+        r = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, str, sizeof(str)); 
+        if (r > 0) {
             printf("%s", str);
-        else
+        } else {
             printf("empty");
-    } else
+        }
+    } else {
         printf("null");
-
+    }
     putchar('\n');
+    libusb_close(handle);
 }
 
 int main() {
@@ -42,8 +44,7 @@ int main() {
     // получить список всех найденных USB- устройств
     countUSBDevices = libusb_get_device_list(ctx, &devs);
     if (countUSBDevices < 0) {
-        fprintf(stderr,
-                "Ошибка: список USB устройств не получен. Код: %d\n", r);
+        fprintf(stderr, "Ошибка: список USB устройств не получен. Код: %d\n", r);
         return 1;
     }
 
