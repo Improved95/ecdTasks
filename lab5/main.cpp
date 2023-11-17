@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 #include <opencv2/opencv.hpp>
 using namespace std;
 using namespace cv;
@@ -11,18 +12,28 @@ int main(int argc, char *argv[]) {
     Mat grayFrame;
     double tick = 0;
     size_t tickCountSave = 0;
+    timespec beginShow{};
+    timespec endShow{};
 
     while (true) {
+        clock_gettime(CLOCK_BOOTTIME, &begin);
         capture.read(frame);
+        clock_gettime(CLOCK_BOOTTIME, &end);
         if (frame.empty()) {
             break;
         }
 
-        size_t tickCount = getTickCount();
-        tick = (tickCount - tickCountSave) / (double)getTickFrequency();
-        putText(frame, "FPS: " + to_string((int)(1 / tick)), Point(5, 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
-        putText(frame, "Time on frame: " + to_string(tick) + "s", Point(5, 35), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
-        tickCountSave = tickCount;
+        takenTime = static_cast<double>(end.tv_sec - begin.tv_sec) * 1e9;
+        takenTime = (takenTime + static_cast<double>(end.tv_nsec - begin.tv_nsec)) * 1e-9;
+        // FPS = 1.0 / takenTime;
+
+        // size_t tickCount = getTickCount();
+        // tick = (tickCount - tickCountSave) / (double)getTickFrequency();
+        putText(frame, "FPS: " + to_string((int)(), Point(5, 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+        putText(frame, "Time on frame: " + to_string(takenTime) + "s", Point(5, 35), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+        // tickCountSave = tickCount;
+
+
 
         // Применяем черно-белый эффект
         Mat grayFrame;
