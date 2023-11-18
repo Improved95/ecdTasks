@@ -27,14 +27,13 @@ public:
     }
 
     float * operator[](const size_t i) {
-        return (array + i);
+        return (array + i * N);
     }
     float * operator[](const size_t i) const {
-        return (array + i);
+        return (array + i * N);
     }
 
     void operator=(const Matrix &source) {
-        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
                 (*this)[i][j] = source[i][j];
@@ -44,7 +43,6 @@ public:
 
     Matrix operator+(const Matrix &source) {
         Matrix temp;
-        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             AVX2_Add(temp[i], (*this)[i], source[i], N);
         }
@@ -53,7 +51,6 @@ public:
 
     Matrix operator-(const Matrix &source) {
         Matrix temp;
-        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             AVX2_Sub(temp[i], (*this)[i], source[i], N);
         }
@@ -65,7 +62,10 @@ public:
         for (size_t i = 0; i < N; i++) {
             for (size_t k = 0; k < N; k++) {
                 for (size_t j = 0; j < N; j++) {
-                    temp[i][j] += (*this)[i][k] * source[k][j];
+                    float s = source[k][j];
+                    float t = (*this)[i][k];
+
+                    temp[i][j] += t * s; 
                 }
             }
         }
@@ -74,7 +74,6 @@ public:
 
     Matrix operator/(const float divisor) {
         Matrix temp;
-        #pragma omp parallel for
         for (size_t i = 0; i < N; i++) {
             AVX2_Div(temp[i], (*this)[i], (float)divisor, N);
         }
@@ -202,10 +201,9 @@ int main() {
     // ma.coutMatrix();
     // mo.coutMatrix();
 
+    Matrix ms = ma * ma;
     ma.coutMatrix();
-
-    // Matrix ma2 = ma * ma;
-    // ma2.coutMatrix();
+    ms.coutMatrix();
 
     return 0;
 }
