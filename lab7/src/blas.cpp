@@ -1,12 +1,11 @@
 #include <iostream>
-#include <ctime>
 #include <vector>
 #include <immintrin.h>
 #include <cstring>
 //#include <cblas.h>
 
 #define M 1000
-#define N 3
+#define N 8
 
 using namespace std;
 using std::vector;
@@ -198,38 +197,9 @@ int main() {
     }
     mo = mo * mb;
 
+    cout << "Naive" << endl;
     ma.coutMatrix();
     mo.coutMatrix();
 
     return 0;
 }
-
-// cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, A, N, B, N, 0.0, C, N);
-// 0.00529352 0.00985796 -0.007962 
-// -0.0121013 0.00514698 0.010341 
-// 0.0101311 -0.00505653 0.00390048 
-
-/*
-Matrix operator*(const Matrix &source) {
-        Matrix temp;
-        for (size_t i = 0; i < N; i++) {
-            for (size_t k = 0; k < N; k++) {
-                size_t j = 0;
-                size_t aligned_size = N - N % 8;
-                if (N >= 8) {
-                    __m128 v_scalar =  _mm_set1_ps((*this)[i][k]);
-                    for (; j < aligned_size; j += 4) {
-                        __m128 v_source = _mm_loadu_ps(source[k]);
-                        __m128 v_mul = _mm_mul_ps(v_source, v_scalar);
-                        __m128 v_temp = _mm_loadu_ps(&temp[i][j]);
-                        __m128 v_res = _mm_add_ps(v_temp, v_mul);
-                        _mm_storeu_ps(&temp[i][j], v_res);
-                    }
-                }
-                for (; j < N; j++) {
-                    temp[i][j] += (*this)[i][k] * source[k][j];
-                }
-            }
-        }
-        return temp;
-    }*/
