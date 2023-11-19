@@ -2,7 +2,8 @@
 #include <ctime>
 #include <vector>
 #include <immintrin.h>
-#include <cblas.h>
+#include <cstring>
+//#include <cblas.h>
 
 #define M 1000
 #define N 3
@@ -21,16 +22,17 @@ private:
 public:
     Matrix() {
         array = new float[N * N];
+        std::memset(array, 0, N * N * sizeof(float));
     }
     ~Matrix() {
         delete array;
     }
 
     float * operator[](const size_t i) {
-        return (array + i * N);
+        return (array + (i * N));
     }
     float * operator[](const size_t i) const {
-        return (array + i * N);
+        return (array + (i * N));
     }
 
     void operator=(const Matrix &source) {
@@ -61,11 +63,9 @@ public:
         Matrix temp;
         for (size_t i = 0; i < N; i++) {
             for (size_t k = 0; k < N; k++) {
+                float t = (*this)[i][k];
                 for (size_t j = 0; j < N; j++) {
-                    float s = source[k][j];
-                    float t = (*this)[i][k];
-
-                    temp[i][j] += t * s; 
+                    temp[i][j] += t * source[k][j];
                 }
             }
         }
@@ -198,12 +198,8 @@ int main() {
     }
     mo = mo * mb;
 
-    // ma.coutMatrix();
-    // mo.coutMatrix();
-
-    Matrix ms = ma * ma;
     ma.coutMatrix();
-    ms.coutMatrix();
+    mo.coutMatrix();
 
     return 0;
 }
@@ -213,7 +209,8 @@ int main() {
 // -0.0121013 0.00514698 0.010341 
 // 0.0101311 -0.00505653 0.00390048 
 
-/*Matrix operator*(const Matrix &source) {
+/*
+Matrix operator*(const Matrix &source) {
         Matrix temp;
         for (size_t i = 0; i < N; i++) {
             for (size_t k = 0; k < N; k++) {
