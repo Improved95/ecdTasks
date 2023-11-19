@@ -138,18 +138,7 @@ public:
         float maxSum = 0;
         for (size_t i = 0; i < N; i++) {
             float sum = 0;
-            size_t j = 0;
-            if (N >= 4) {
-                size_t aligned_size = N - N % 4;
-                for (; j < aligned_size; j += 4) {
-                    __m128 vector = _mm_loadu_ps((*this)[i]);
-                    __m128 v_sum = _mm_hadd_ps(vector, vector);
-                    float res;
-                    _mm_store_ss(&res, v_sum);
-                    sum += res;
-                }
-            }
-            for (; j < N; j++) {
+            for (size_t j = 0; j < N; j++) {
                 sum += (*this)[i][j];
             }
             if (sum > maxSum) {
@@ -163,17 +152,6 @@ public:
         float maxSum = 0;
         for (size_t i = 0; i < N; i++) {
             float sum = 0;
-            size_t j = 0;
-            if (N >= 4) {
-                size_t aligned_size = N - N % 4;
-                for (; j < aligned_size; j += 4) {
-                    __m128 vector = _mm_loadu_ps((*this)[j]);
-                    __m128 v_sum = _mm_hadd_ps(vector, vector);
-                    float res;
-                    _mm_store_ss(&res, v_sum);
-                    sum += res;
-                }
-            }
             for (size_t j = 0; j < N; j++) {
                 sum += (*this)[j][i];
             }
@@ -229,3 +207,14 @@ int main() {
 }
 
 // cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, A, N, B, N, 0.0, C, N);
+/*
+40 1 79 84
+56 23 5 70
+81 71 80 28
+97 47 90 1
+
+-0.00554211 0.0130805 -0.0167522 0.0190294
+-0.00645813 -0.0029306 0.0273585 -0.0184877
+0.00928033 -0.0126317 0.00372497 0.000355556
+0.00589279 0.00568594 0.00414814 -0.00917584
+*/
