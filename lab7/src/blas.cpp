@@ -66,13 +66,7 @@ public:
 
     Matrix operator*(const Matrix &source) {
         Matrix temp;
-        for (size_t i = 0; i < N; i++) {
-            for (size_t k = 0; k < N; k++) {
-                for (size_t j = 0; j < N; j++) {
-                    temp[i][j] += (*this)[i][k] * source[k][j];
-                }
-            }
-        }
+        cblas_sgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans, N, N, N, 1.0, source[0], N, (*this)[0], N, 0.0, temp[0], N);
         return temp;
     }
 
@@ -151,7 +145,7 @@ int main() {
     }
     mo = mo * mb;
 
-    cout << "Naive" << endl;
+    cout << "Blas" << endl;
     ma.coutMatrix();
     mo.coutMatrix();
 
