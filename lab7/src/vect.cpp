@@ -138,7 +138,19 @@ public:
         float maxSum = 0;
         for (size_t i = 0; i < N; i++) {
             float sum = 0;
-            for (size_t j = 0; j < N; j++) {
+            size_t j = 0;
+            if (N >= 4) {
+                size_t aligned_size = N - N % 4;
+                for (; j < aligned_size; j += 4) {
+                    __m128 vector = _mm_loadu_ps((*this)[i] + j);
+                    __m128 v_sum = _mm_hadd_ps(vector, vector);
+                    v_sum = _mm_hadd_ps(v_sum, v_sum);
+                    float res;
+                    _mm_store_ss(&res, v_sum);
+                    sum += res;
+                }
+            }
+            for (; j < N; j++) {
                 sum += (*this)[i][j];
             }
             if (sum > maxSum) {
@@ -218,3 +230,14 @@ int main() {
 0.00928033 -0.0126317 0.00372497 0.000355556
 0.00589279 0.00568594 0.00414814 -0.00917584
 */
+
+/*
+65 16 15 4
+4 54 98 2
+9 29 30 5
+74 13 29 26
+
+0.0174969 0.000761329 -0.0107079 -0.0006022
+0.00697509 -0.0187286 0.0712342 -0.0137411
+-0.00357375 0.0207921 -0.0395288 0.00680068
+-0.0492698 -0.0159578 0.0388468 0.0394466*/

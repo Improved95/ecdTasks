@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 project(lab7)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -marсh=native -msse4.2 -Werror -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -O0 -march=native -Werror -Wextra")
 add_executable(${PROJECT_NAME} src/vect.cpp)
 #target_link_libraries(${PROJECT_NAME} blas)
