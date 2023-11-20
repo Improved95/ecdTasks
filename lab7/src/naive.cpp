@@ -1,16 +1,10 @@
 #include <iostream>
-#include <vector>
 #include <cstring>
 
 #define M 1000
 #define N 8
 
 using namespace std;
-using std::vector;
-
-void AVX2_Add(float* res, const float* a, const float* b, size_t size);
-void AVX2_Sub(float* res, const float* a, const float* b, size_t size);
-void AVX2_Div(float* res, const float* a, const float b, size_t size);
 
 class Matrix {
 private:
