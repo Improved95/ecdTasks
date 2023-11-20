@@ -65,14 +65,11 @@ public:
 
     Matrix operator*(const Matrix &source) {
         Matrix temp;
-        vector<float> resV;
         for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                float res = 0;
-                for (size_t k = 0; k < N; k++) {
-                    res += (*this)[i][k] * source[k][j];
+            for (size_t k = 0; k < N; k++) {
+                for (size_t j = 0; j < N; j++) {
+                    temp[i][j] += (*this)[i][k] * source[k][j];
                 }
-                temp[i][j] = res;
             }
         }
         return temp;
