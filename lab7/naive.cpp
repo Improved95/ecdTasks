@@ -2,7 +2,7 @@
 #include <cstring>
 
 #define M 1000
-#define N 8
+#define N 4
 
 using namespace std;
 
@@ -43,24 +43,20 @@ public:
         return (array + (i * N));
     }
 
-    Matrix operator+(const Matrix &source) {
-        Matrix temp;
+    void operator+=(const Matrix &source) {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] + source[i][j];
+                (*this)[i][j] = (*this)[i][j] + source[i][j];
             }
         }
-        return temp;
     }
 
-    Matrix operator-(const Matrix &source) {
-        Matrix temp;
+    void operator-=(const Matrix &source) {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] - source[i][j];
+                (*this)[i][j] -= source[i][j];
             }
         }
-        return temp;
     }
 
     Matrix operator*(const Matrix &source) {
@@ -75,14 +71,12 @@ public:
         return temp;
     }
 
-    Matrix operator/(const float source) {
-        Matrix temp;
+    void operator/=(const float divisor) {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] / (float) source;
+                (*this)[i][j] /= (float)divisor;
             }
         }
-        return temp;
     }
 
     float maxSumRows() {
@@ -126,31 +120,31 @@ public:
 
 int main() {
     srand(100);
-    Matrix ma, mt, me;
+    Matrix ma, mb, mr, mo;
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
             float a = rand() % 100;
             ma[i][j] = a;
-            mt[j][i] = a;
-            me[i][j] = 0;
+            mb[j][i] = a;
+            mr[i][j] = 0;
+            mo[i][j] = 0;
         }
-        me[i][i] = 1;
+        mr[i][i] = 1;
+        mo[i][i] = 1;
     }
 
-    Matrix mb = mt / (ma.maxSumRows() * ma.maxSumColumns());
-    Matrix mr = me - (mb * ma);
+    mb /= (ma.maxSumRows() * ma.maxSumColumns());
+    mr -= (mb * ma);
 
-    Matrix mo, mrc;
+    Matrix mrc;
     mrc = mr;
-
-    mo = me;
     for (size_t i = 1; i < M + 1; i++) {
-        mo = mo + mr;
+        mo += mr;
         mr = mr * mrc;
     }
     mo = mo * mb;
 
-    cout << "Naive" << endl;
+    cout << "naive" << endl;
     ma.coutMatrix();
     mo.coutMatrix();
 

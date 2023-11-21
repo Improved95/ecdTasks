@@ -1,9 +1,10 @@
 #include <iostream>
 #include <cstring>
+#include <immintrin.h>
 #include <cblas.h>
 
 #define M 1000
-#define N 8
+#define N 4
 
 using namespace std;
 
@@ -44,24 +45,12 @@ public:
         return (array + (i * N));
     }
 
-    Matrix operator+(const Matrix &source) {
-        Matrix temp;
-        for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] + source[i][j];
-            }
-        }
-        return temp;
+    void operator+=(const Matrix &source) {
+        cblas_saxpy(N * N, 1.0, source[0], 1, (*this)[0], 1);
     }
 
-    Matrix operator-(const Matrix &source) {
-        Matrix temp;
-        for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] - source[i][j];
-            }
-        }
-        return temp;
+    void operator-=(const Matrix &source) {
+        cblas_saxpy(N * N, -1.0, source[0], 1, (*this)[0], 1);
     }
 
     Matrix operator*(const Matrix &source) {
@@ -70,23 +59,14 @@ public:
         return temp;
     }
 
-    Matrix operator/(const float source) {
-        Matrix temp;
-        for (size_t i = 0; i < N; i++) {
-            for (size_t j = 0; j < N; j++) {
-                temp[i][j] = (*this)[i][j] / (float) source;
-            }
-        }
-        return temp;
+    void operator/=(const float divisor) {
+        cblas_sscal(N * N, 1 / divisor, (*this)[0], 1);
     }
 
     float maxSumRows() {
         float maxSum = 0;
         for (size_t i = 0; i < N; i++) {
-            float sum = 0;
-            for (size_t j = 0; j < N; j++) {
-                sum += (*this)[i][j];
-            }
+            float sum = cblas_sasum(N, (*this)[i], 1);
             if (sum > maxSum) {
                 maxSum = sum;
             }
@@ -121,31 +101,31 @@ public:
 
 int main() {
     srand(100);
-    Matrix ma, mt, me;
+    Matrix ma, mb, mr, mo;
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
             float a = rand() % 100;
             ma[i][j] = a;
-            mt[j][i] = a;
-            me[i][j] = 0;
+            mb[j][i] = a;
+            mr[i][j] = 0;
+            mo[i][j] = 0;
         }
-        me[i][i] = 1;
+        mr[i][i] = 1;
+        mo[i][i] = 1;
     }
 
-    Matrix mb = mt / (ma.maxSumRows() * ma.maxSumColumns());
-    Matrix mr = me - (mb * ma);
+    mb /= (ma.maxSumRows() * ma.maxSumColumns());
+    mr -= (mb * ma);
 
-    Matrix mo, mrc;
+    Matrix mrc;
     mrc = mr;
-
-    mo = me;
     for (size_t i = 1; i < M + 1; i++) {
-        mo = mo + mr;
+        mo += mr;
         mr = mr * mrc;
     }
     mo = mo * mb;
 
-    cout << "Blas" << endl;
+    cout << "blas2" << endl;
     ma.coutMatrix();
     mo.coutMatrix();
 

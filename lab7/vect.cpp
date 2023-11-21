@@ -1,6 +1,6 @@
 #include <iostream>
-#include <immintrin.h>
 #include <cstring>
+#include <immintrin.h>
 
 #define M 1000
 #define N 4
@@ -44,8 +44,7 @@ public:
         return (array + (i * N));
     }
 
-    Matrix operator+(const Matrix &source) {
-        Matrix temp;
+    void operator+=(const Matrix &source) {
         for (size_t i = 0; i < N; i++) {
             size_t j = 0;
             if (N >= 4) {
@@ -54,14 +53,13 @@ public:
                     __m128 va = _mm_loadu_ps(&(*this)[i][j]);
                     __m128 vb = _mm_loadu_ps(&source[i][j]);
                     __m128 vres = _mm_add_ps(va, vb);
-                    _mm_storeu_ps(&temp[i][j], vres);
+                    _mm_storeu_ps(&((*this)[i][j]), vres);
                 }
             }
             for (; j < N; ++i) {
-                temp[i][j] = (*this)[i][j] + source[i][j];
+                (*this)[i][j] += source[i][j];
             }
         }
-        return temp;
     }
 
     Matrix operator-(const Matrix &source) {
@@ -82,6 +80,24 @@ public:
             }
         }
         return temp;
+    }
+
+    void operator-=(const Matrix &source) {
+        for (size_t i = 0; i < N; i++) {
+            size_t j = 0;
+            if (N >= 4) {
+                size_t aligned_size = N - N % 4;
+                for (; j < aligned_size; j += 4) {
+                    __m128 va = _mm_loadu_ps(&(*this)[i][j]);
+                    __m128 vb = _mm_loadu_ps(&source[i][j]);
+                    __m128 vres = _mm_sub_ps(va, vb);
+                    _mm_storeu_ps(&((*this)[i][j]), vres);
+                }
+            }
+            for (; j < N; ++i) {
+                (*this)[i][j] -= source[i][j];
+            }
+        }
     }
 
     Matrix operator*(const Matrix &source) {
@@ -109,8 +125,7 @@ public:
         return temp;
     }
 
-    Matrix operator/(const float divisor) {
-        Matrix temp;
+    void operator/=(const float divisor) {
         for (size_t i = 0; i < N; i++) {
             size_t j = 0;
             if (N >= 4) {
@@ -118,14 +133,13 @@ public:
                 for (; j < aligned_size; j += 4) {
                     __m128 va = _mm_loadu_ps(&(*this)[i][j]);
                     __m128 vres = _mm_div_ps(va, _mm_set1_ps(divisor));
-                    _mm_storeu_ps(&temp[i][j], vres);
+                    _mm_storeu_ps(&((*this)[i][j]), vres);
                 }
             }
             for (; j < N; j++) {
-                temp[i][j] = (*this)[i][j] / divisor;
+                (*this)[i][j] /= divisor;
             }
         }
-        return temp;
     }
 
     float maxSumRows() {
@@ -181,26 +195,26 @@ public:
 
 int main() {
     srand(100);
-    Matrix ma, mt, me;
+    Matrix ma, mb, mr, mo;
     for (size_t i = 0; i < N; i++) {
         for (size_t j = 0; j < N; j++) {
             float a = rand() % 100;
             ma[i][j] = a;
-            mt[j][i] = a;
-            me[i][j] = 0;
+            mb[j][i] = a;
+            mr[i][j] = 0;
+            mo[i][j] = 0;
         }
-        me[i][i] = 1;
+        mr[i][i] = 1;
+        mo[i][i] = 1;
     }
 
-    Matrix mb = mt / (ma.maxSumRows() * ma.maxSumColumns());
-    Matrix mr = me - (mb * ma);
+    mb /= (ma.maxSumRows() * ma.maxSumColumns());
+    mr -= (mb * ma);
 
-    Matrix mo, mrc;
+    Matrix mrc;
     mrc = mr;
-
-    mo = me;
     for (size_t i = 1; i < M + 1; i++) {
-        mo = mo + mr;
+        mo += mr;
         mr = mr * mrc;
     }
     mo = mo * mb;

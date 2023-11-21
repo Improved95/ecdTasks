@@ -1,4 +1,4 @@
-// cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, A, N, B, N, 0.0, C, N);
+
 /*
 40 1 79 84
 56 23 5 70
