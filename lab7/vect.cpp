@@ -2,8 +2,8 @@
 #include <cstring>
 #include <immintrin.h>
 
-#define M 1000
-#define N 4
+#define M 10
+#define N 2048
 
 using namespace std;
 

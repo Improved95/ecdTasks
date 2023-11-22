@@ -1,0 +1,41 @@
+naive
+
+real	2m18,938s
+user	2m18,549s
+sys	0m0,220s
+
+real	2m18,670s
+user	2m18,297s
+sys	0m0,224s
+
+real	2m19,031s
+user	2m18,704s
+sys	0m0,164s
+
+vect
+
+real	0m47,727s
+user	0m47,309s
+sys	0m0,348s
+
+real	0m46,341s
+user	0m46,053s
+sys	0m0,236s
+
+real	0m47,068s
+user	0m46,681s
+sys	0m0,340s
+
+blas
+
+real	0m7,128s
+user	0m33,727s
+sys	0m5,709s
+
+real	0m7,677s
+user	0m34,141s
+sys	0m5,965s
+
+real	0m7,883s
+user	0m36,517s
+sys	0m17,571s
