@@ -33,8 +33,11 @@
 
 .DS_Store
 build
+build_
 out
 .vs
 CMakeSettings.json
 **idea
 **cmake-build-debug
+**openBLAS
+**openBLAS_lib
