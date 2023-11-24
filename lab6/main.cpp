@@ -32,12 +32,14 @@ void printData(libusb_device *dev) {
 int main() {
     libusb_device **devs; // указатель на указатель на устройство, используется для получения списка устройств
     libusb_context *ctx = nullptr; // контекст сессии libusb
-    int r; // для возвращаемых значений
+    int r = 0; // для возвращаемых значений
     ssize_t countUSBDevices; // число найденных USB-устройств
 
     r = libusb_init(&ctx); // инициализировать библиотеку libusb, открыть сессию работы с libusb
     if (r < 0) {
         fprintf(stderr,"Ошибка: инициализация не выполнена, код: %d.\n", r);
+        libusb_free_device_list(devs, 1);
+        libusb_exit(ctx);
         return 1;
     }
 
@@ -45,6 +47,8 @@ int main() {
     countUSBDevices = libusb_get_device_list(ctx, &devs);
     if (countUSBDevices < 0) {
         fprintf(stderr, "Ошибка: список USB устройств не получен. Код: %d\n", r);
+        libusb_free_device_list(devs, 1);
+        libusb_exit(ctx);
         return 1;
     }
 
@@ -61,8 +65,8 @@ int main() {
     }
     printf("===========================================================\n");
 
-    libusb_free_device_list(devs, 1); // освободить память, выделенную функцией получения списка устройств
-    libusb_exit(ctx); // завершить работу с библиотекой libusb, закрыть сессию работы с libusb
+    libusb_free_device_list(devs, 1);
+    libusb_exit(ctx);
 
     return 0;
 }
