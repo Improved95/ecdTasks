@@ -43,22 +43,23 @@ void warmingUpMemory(size_t *arr, size_t len) {
 uint64_t bypass(size_t *arr, size_t len) {
     warmingUpMemory(arr, len);
 
-    // uint64_t averageTime = 0;
+    uint64_t averageTime = 0;
     size_t k = 0;
-    uint64_t startTime = __rdtsc();
     for (size_t i = 0; i < 10; i++) {
         for (size_t j = 0; j < len; j++) {
+            uint64_t startTime = __rdtsc();
             k = arr[k];
+            uint64_t endTime = __rdtsc();
+            averageTime = (averageTime*(i + 1) + (endTime - startTime)) / (i + 2);
+            // cout << endTime << " " << startTime << endl;
         }
     }
     
-            uint64_t endTime = __rdtsc();
-            // averageTime = (averageTime*(i + 1) + (endTime - startTime)) / (i + 2);
-            // cout << endTime << " " << startTime << endl;
+            
             // exit(EXIT_FAILURE);
 
-    return endTime - startTime;
-    // return averageTime;
+    // return endTime - startTime;
+    return averageTime;
 }
 
 void fillAndBypass(void(*fillType)(size_t *arr, size_t len)) {
@@ -84,17 +85,12 @@ void fillAndBypass(void(*fillType)(size_t *arr, size_t len)) {
         cout << i * sizeof(size_t) / 1024 << "kb " << minTimeMemoryCalls << " " << endl;
 
         if (sf1 && i * sizeof(size_t) > 256 * 1024) { // more then 256kb
-            cout << "go in 64kb" << endl; 
+            // cout << "go in 64kb" << endl; 
             step = 64 * 1024 / sizeof(size_t);
             sf1 = false;
         }
-        if (sf2 && i * sizeof(size_t) > 1 * 1024 * 1024) { // more then 1mb
-            cout << "go in 64kb" << endl; 
-            step = 64 * 1024 / sizeof(size_t);
-            sf2 = false;
-        }
         if (sf3 && i * sizeof(size_t) > 2 * 1024 * 1024) { // more then 2mb
-            cout << "go in 2mb" << endl; 
+            // cout << "go in 2mb" << endl; 
             step = 2 * 1024 * 1024 / sizeof(size_t);
             sf3 = false;
         }
