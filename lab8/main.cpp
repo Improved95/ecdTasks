@@ -1,6 +1,7 @@
 #include <iostream>
-#include <x86intrin.h>
+#include <time.h>
 #include <limits.h>
+#include <fstream>
 using namespace std;
 
 void sattoloFill(size_t *a, size_t len) {
@@ -33,42 +34,33 @@ void backwardFill(size_t *arr, size_t len) {
 
 void warmingUpMemory(size_t *arr, size_t len) {
     size_t k = 0;
-    for (size_t i = 0; i < 10; i++) {
-        for (size_t j = 0; j < len; j++) {
-            k = arr[k];
-        }
+    for (size_t j = 0; j < len; j++) {
+        k = arr[k];
     }
 }
 
-uint64_t bypass(size_t *arr, size_t len) {
+size_t bypass(size_t *arr, size_t len) {
     warmingUpMemory(arr, len);
-
-    uint64_t averageTime = 0;
+    
     size_t k = 0;
+    size_t startTime = __builtin_ia32_rdtsc();
     for (size_t i = 0; i < 10; i++) {
         for (size_t j = 0; j < len; j++) {
-            uint64_t startTime = __rdtsc();
             k = arr[k];
-            uint64_t endTime = __rdtsc();
-            averageTime = (averageTime*(i + 1) + (endTime - startTime)) / (i + 2);
-            // cout << endTime << " " << startTime << endl;
         }
     }
-    
-            
-            // exit(EXIT_FAILURE);
+    size_t endTime = __builtin_ia32_rdtsc();
 
-    // return endTime - startTime;
-    return averageTime;
+    return endTime - startTime;
 }
 
-void fillAndBypass(void(*fillType)(size_t *arr, size_t len)) {
+void fillAndBypass(void(*fillType)(size_t *arr, size_t len), ofstream &fileOut) {
     const size_t n_min = 1 * 1024 / sizeof(size_t); //1kb
     const size_t n_max = 32 * 1024 * 1024 / sizeof(size_t); //32mb
     size_t step = 8 * 1024 / sizeof(size_t); //8kb
 
-    bool sf1 = true, sf2 = true, sf3 = true;
-    uint64_t minTimeMemoryCalls = ULLONG_MAX;
+    bool sf1 = true, sf2 = true;
+    size_t timeMemoryCalls = 0, minTimeMemoryCalls = ULLONG_MAX;
 
     for (size_t i = n_min; i < n_max; i += step) {
         size_t *arr = new size_t[i];
@@ -76,23 +68,21 @@ void fillAndBypass(void(*fillType)(size_t *arr, size_t len)) {
 
         fillType(arr, i);
         for (size_t j = 0; j < 5; j++) {
-            auto averageTimeMemoryCalls = bypass(arr, i);
-            if (averageTimeMemoryCalls < minTimeMemoryCalls) {
-                minTimeMemoryCalls = averageTimeMemoryCalls;
+            timeMemoryCalls = bypass(arr, i);
+            if (timeMemoryCalls < minTimeMemoryCalls) {
+                minTimeMemoryCalls = timeMemoryCalls;
             }
         }
 
-        cout << i * sizeof(size_t) / 1024 << "kb " << minTimeMemoryCalls << " " << endl;
+        fileOut << i * sizeof(size_t) / 1024 << "kb " << timeMemoryCalls << " " << endl;
 
         if (sf1 && i * sizeof(size_t) > 256 * 1024) { // more then 256kb
-            // cout << "go in 64kb" << endl; 
             step = 64 * 1024 / sizeof(size_t);
             sf1 = false;
         }
-        if (sf3 && i * sizeof(size_t) > 2 * 1024 * 1024) { // more then 2mb
-            // cout << "go in 2mb" << endl; 
+        if (sf2 && i * sizeof(size_t) > 2 * 1024 * 1024) { // more then 2mb
             step = 2 * 1024 * 1024 / sizeof(size_t);
-            sf3 = false;
+            sf2 = false;
         }
 
         delete[] arr;
@@ -100,15 +90,17 @@ void fillAndBypass(void(*fillType)(size_t *arr, size_t len)) {
 }
 
 int main() {
+    ofstream fileOut;
+    fileOut.open("time.txt");
 
-    cout << "forward bypass" << endl;
-    fillAndBypass(forwardFill);
+    fileOut << "forward bypass" << endl;
+    fillAndBypass(forwardFill, fileOut);
 
-    cout << endl << "backward bypass" << endl;
-    fillAndBypass(backwardFill);
+    fileOut << endl << "backward bypass" << endl;
+    fillAndBypass(backwardFill, fileOut);
 
-    cout << endl << "random bypass" << endl;
-    fillAndBypass(sattoloFill);
+    fileOut << endl << "random bypass" << endl;
+    fillAndBypass(sattoloFill, fileOut);
 
     return 0;
 }
