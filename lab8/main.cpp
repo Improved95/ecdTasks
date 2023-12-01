@@ -57,9 +57,10 @@ size_t bypass(size_t *arr, size_t len) {
 void fillAndBypass(void(*fillType)(size_t *arr, size_t len), ofstream &fileOut) {
     const size_t n_min = 1 * 1024 / sizeof(size_t); //1kb
     const size_t n_max = 32 * 1024 * 1024 / sizeof(size_t); //32mb
-    size_t step = 8 * 1024 / sizeof(size_t); //8kb
+    size_t step = 16 * 1024 / sizeof(size_t); //8kb
 
-    bool sf1 = true, sf2 = true;
+    bool sf1 = true;
+    bool sf2 = true;
     size_t timeMemoryCalls = 0, minTimeMemoryCalls = ULLONG_MAX;
 
     for (size_t i = n_min; i < n_max; i += step) {
@@ -74,14 +75,14 @@ void fillAndBypass(void(*fillType)(size_t *arr, size_t len), ofstream &fileOut) 
             }
         }
 
-        fileOut << i * sizeof(size_t) / 1024 << "kb " << timeMemoryCalls << " " << endl;
+        fileOut << i * sizeof(size_t) / 1024 << " " << timeMemoryCalls << " " << endl;
 
         if (sf1 && i * sizeof(size_t) > 256 * 1024) { // more then 256kb
-            step = 64 * 1024 / sizeof(size_t);
+            step = 32 * 1024 / sizeof(size_t);
             sf1 = false;
         }
         if (sf2 && i * sizeof(size_t) > 2 * 1024 * 1024) { // more then 2mb
-            step = 2 * 1024 * 1024 / sizeof(size_t);
+            step = 512 * 1024 / sizeof(size_t);
             sf2 = false;
         }
 
