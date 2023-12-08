@@ -43,15 +43,16 @@ size_t bypass(size_t *arr, size_t len) {
     warmingUpMemory(arr, len);
     
     size_t k = 0;
-    size_t startTime = __builtin_ia32_rdtsc();
+    volatile size_t startTime = __builtin_ia32_rdtsc();
     for (size_t i = 0; i < 10; i++) {
         for (size_t j = 0; j < len; j++) {
             k = arr[k];
         }
     }
-    size_t endTime = __builtin_ia32_rdtsc();
+    volatile size_t endTime = __builtin_ia32_rdtsc();
+    cerr << k;
 
-    return endTime - startTime;
+    return (endTime - startTime) / (10 * len);
 }
 
 void fillAndBypass(void(*fillType)(size_t *arr, size_t len), ofstream &fileOut) {
