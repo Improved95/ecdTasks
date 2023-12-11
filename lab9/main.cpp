@@ -54,5 +54,6 @@ int main() {
     }
 
     delete[] array;
+    fileOut.close();
     return 0;
 } 
