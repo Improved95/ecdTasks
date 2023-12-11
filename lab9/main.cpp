@@ -2,8 +2,8 @@
 #include <fstream>
 using namespace std;
 
-const static size_t N = 100000000 * 2;
-#define NUMBER_OF_BYPASS 5
+const static size_t N = 17 * 32 * 1024 * 1024 / sizeof(int);
+#define NUMBER_OF_BYPASS 20
 
 uint64_t bypassArray(unsigned int const *array) {
     volatile size_t i;
