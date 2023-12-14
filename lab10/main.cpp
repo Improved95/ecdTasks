@@ -18,22 +18,30 @@ void sattoloFill(int *a, size_t len) {
     }
 }    
 
-size_t bypass(int *arr, size_t step, size_t len) {
-    
-    size_t k = 0, sk = 0;
-    volatile size_t time = 0;
-    for (size_t i = 0; i < len; i++) {
-        sk = arr[k];
-        volatile size_t startTime = __builtin_ia32_rdtsc();
-        k = arr[sk + step];
-        volatile size_t endTime = __builtin_ia32_rdtsc();
+size_t bypass(int *arr, size_t step, size_t len, ostream &fileOut) {
+    size_t k = 0, sk = 0, bypassNumber = 1;
+    volatile size_t t1 = 0, t2 = 0, startTime, endTime;
+    for (size_t j = 0; j < bypassNumber; j++) {
+        for (size_t i = 0; i < len; i++) {
+            startTime = __builtin_ia32_rdtsc();
+            sk = arr[k];
+            endTime = __builtin_ia32_rdtsc();
+            t1 += endTime - startTime;
 
-        time += endTime - startTime;
+            startTime = __builtin_ia32_rdtsc();
+            k = arr[sk + step];
+            endTime = __builtin_ia32_rdtsc();
+            t2 += endTime - startTime;
+        }
     }
     cerr << k;
     cerr << sk;
 
-    return time / len;
+    fileOut << step << " " << t1 / (len * bypassNumber) << " " 
+            << t2 / (len * bypassNumber) << endl;
+
+    // return time / (len * nb);
+    return 0;
 }
 
 int main() {
@@ -45,8 +53,8 @@ int main() {
 
     sattoloFill(arr, len - 128);
 
-    for (size_t i = 10; i < 20; i++) {
-        fileOut << i << " " << bypass(arr, i, len) << endl;
+    for (size_t i = 0; i < 20; i++) {
+        cerr << i << " " << bypass(arr, i, len, fileOut) << endl;
     }
 
 }
