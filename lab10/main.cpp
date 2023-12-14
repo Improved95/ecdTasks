@@ -21,23 +21,20 @@ void sattoloFill(int *a, size_t len) {
 size_t bypass(int *arr, size_t step, size_t len, ostream &fileOut) {
     size_t k = 0, sk = 0, bypassNumber = 1;
     volatile size_t t1 = 0, t2 = 0, startTime, endTime;
+
+    startTime = __builtin_ia32_rdtsc();
     for (size_t j = 0; j < bypassNumber; j++) {
         for (size_t i = 0; i < len; i++) {
-            startTime = __builtin_ia32_rdtsc();
             sk = arr[k];
-            endTime = __builtin_ia32_rdtsc();
-            t1 += endTime - startTime;
-
-            startTime = __builtin_ia32_rdtsc();
             k = arr[sk + step];
-            endTime = __builtin_ia32_rdtsc();
-            t2 += endTime - startTime;
         }
     }
     cerr << k;
     cerr << sk;
 
-    fileOut << step << " " << t1 / (len * bypassNumber) << " " 
+    endTime = __builtin_ia32_rdtsc();
+    
+    fileOut << step << " " << (endTime - startTime) / (len * bypassNumber) << " " 
             << t2 / (len * bypassNumber) << endl;
 
     // return time / (len * nb);
