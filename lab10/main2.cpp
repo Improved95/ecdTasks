@@ -43,16 +43,17 @@ int main() {
 
     int k = 0;
     for (int step = 0; step < 32; step++) {
-            k = arr[0];
-            cerr << k;
-            volatile size_t startTime = __builtin_ia32_rdtsc();
-            k = arr[k + step];
-            volatile size_t endTime = __builtin_ia32_rdtsc();
+        k = arr[0];
+        // cerr << k;
 
-            fileOut << step << " " << endTime - startTime << endl;
+        volatile size_t startTime = __builtin_ia32_rdtsc();
+        k = arr[k + step];
+        volatile size_t endTime = __builtin_ia32_rdtsc();
 
-            cerr << k;
-            trashCache(trashArr, trashArrSize);
+        fileOut << step << " " << endTime - startTime << endl;
+
+        cerr << k;
+        trashCache(trashArr, trashArrSize);
     }
     delete[] arr;
     delete[] trashArr;
