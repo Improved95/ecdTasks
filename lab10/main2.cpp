@@ -32,7 +32,7 @@ int main() {
     ofstream fileOut;
     fileOut.open("time.txt");
 
-    size_t trashArrSize = 17 * 1024 * 1024 / sizeof(int);
+    size_t trashArrSize = 100 * 1024 * 1024 / sizeof(int);
     int *trashArr = new int[trashArrSize];
     sattoloFill(trashArr, trashArrSize);
 
@@ -44,21 +44,23 @@ int main() {
 
     volatile unsigned long long startTime;
     volatile unsigned long long endTime;
-    for (int step = 0; step < 200; step++) {
+    int res = 0;
+    for (int step = 0; step < 20; step++) {
         trashCache(trashArr, trashArrSize);
 
-        int k = arr[0];
-        cerr << k;
+        res += arr[0];
 
         startTime = __builtin_ia32_rdtsc();
-        k = arr[step];
+        int k = arr[step];
         endTime = __builtin_ia32_rdtsc();
 
         fileOut << step << " " << endTime - startTime << endl;
 
-        cerr << k;
+        res += k;
     }
     
+    cerr << res;
+
     delete[] arr;
     delete[] trashArr;
     return 0;
