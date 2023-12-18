@@ -32,7 +32,7 @@ int main() {
     ofstream fileOut;
     fileOut.open("time.txt");
 
-    size_t trashArrSize = 100 * 1024 * 1024 / sizeof(int);
+    size_t trashArrSize = 17 * 1024 * 1024 / sizeof(int);
     int *trashArr = new int[trashArrSize];
     sattoloFill(trashArr, trashArrSize);
 
