@@ -6,6 +6,8 @@
 #include <cstring>
 using namespace std;
 
+// замер времени одной команды
+
 void sattoloFill(int *a, size_t len) {
     int i, j;
     srand(unsigned(time(0)));
