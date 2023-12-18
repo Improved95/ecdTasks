@@ -1,5 +1,0 @@
-caches:
-level  size    linesize   miss-latency        replace-time
-  1     32 KB   64 bytes    2.56 ns =   7 cy    1.92 ns =   5 cy
-  2    192 KB  256 bytes    1.39 ns =   4 cy   12.08 ns =  34 cy
-  3     12 MB  256 bytes   28.56 ns =  80 cy   53.76 ns = 151 cy
