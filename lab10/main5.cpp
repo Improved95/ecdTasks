@@ -5,8 +5,8 @@
 #include <cstring>
 using namespace std;
 
-#define BYTE_NUM 256
-#define MAIN_STEP 10
+#define BYTE_NUM 1024
+#define MAIN_STEP 2560
 
 void fillArray(unsigned int *arr, size_t arrSize, size_t step) {
     for (size_t i = 0; i < arrSize; i++) {
@@ -14,27 +14,31 @@ void fillArray(unsigned int *arr, size_t arrSize, size_t step) {
     }
     
     unsigned int index = 0;
-    for (size_t i = 1; i < BYTE_NUM * MAIN_STEP; i++) {
+    for (size_t i = 1; i < MAIN_STEP; i++) {
         arr[index] = index + step;
-        unsigned int newIndex = (i * BYTE_NUM * MAIN_STEP) + (rand() % BYTE_NUM * MAIN_STEP);
+        unsigned int newIndex = (i * MAIN_STEP) + (rand() % MAIN_STEP);
         arr[index + step] = newIndex;
         index = newIndex;
     }
 }
 
 size_t bypass(unsigned int *arr, size_t arrSize) {
-    unsigned int k = 0;
+    unsigned int k = 0, res = 0;
 
     volatile size_t startTime = __builtin_ia32_rdtsc();
-    for (size_t j = 0; j < 20; j++) {
-        for (size_t i = 0; i < arrSize / (BYTE_NUM * MAIN_STEP); ++i) {
+    for (size_t j = 0; j < 200; j++) {
+        for (size_t i = 0; i < arrSize / (MAIN_STEP); ++i) {
             k = arr[k];
             k = arr[k];
         }
+        res += k;
+        k = 0;
     }
     volatile size_t endTime = __builtin_ia32_rdtsc();
 
-    return (endTime - startTime) / (arrSize / (BYTE_NUM * MAIN_STEP)) / 20;
+    cerr << res;
+
+    return (endTime - startTime) / (arrSize / (MAIN_STEP)) / 200;
 }
 
 int main() {
@@ -45,7 +49,7 @@ int main() {
     // const size_t arrSize = 1024 / sizeof(unsigned int); 
     unsigned int *arr = new unsigned int[arrSize]; // 256mb
 
-    for (size_t step = 1; step < 70; ++step) {
+    for (size_t step = 1; step < 200; ++step) {
         fillArray(arr, arrSize, step);
         fileOut << step << " " << bypass(arr, arrSize) << endl;
     }
