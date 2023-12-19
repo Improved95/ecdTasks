@@ -5,7 +5,7 @@
 #include <cstring>
 using namespace std;
 
-static const size_t BYTE_NUM = 1024;
+static const size_t BYTE_NUM = 2048;
 static const size_t MAIN_STEP = 30 * 1024 / sizeof(size_t);
 
 void fillArray(size_t *arr, size_t arrSize, size_t step) {
@@ -23,7 +23,7 @@ void fillArray(size_t *arr, size_t arrSize, size_t step) {
 }
 
 size_t bypass(size_t *arr, size_t arrSize) {
-    size_t k = 0, res = 0, bypassNumber = 400;
+    size_t k = 0, res = 0, bypassNumber = 350;
 
     volatile size_t startTime = __builtin_ia32_rdtsc();
     for (size_t j = 0; j < bypassNumber; j++) {
@@ -48,7 +48,7 @@ int main() {
     const size_t arrSize = BYTE_NUM * 1024 * 1024 / sizeof(size_t); 
     size_t *arr = new size_t[arrSize];
 
-    for (size_t step = 1; step < 150; ++step) {
+    for (size_t step = 1; step < 200; ++step) {
         fillArray(arr, arrSize, step);
         fileOut << step << " " << bypass(arr, arrSize) << endl;
     }
