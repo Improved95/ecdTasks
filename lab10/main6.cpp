@@ -6,28 +6,28 @@
 using namespace std;
 
 static const size_t BYTE_NUM = 1024;
-static const size_t MAIN_STEP = 2560;
+static const size_t MAIN_STEP = 30 * 1024 / sizeof(size_t);
 
-void fillArray(unsigned int *arr, size_t arrSize, size_t step) {
+void fillArray(size_t *arr, size_t arrSize, size_t step) {
     for (size_t i = 0; i < arrSize; i++) {
         arr[i] = 0;
     }
     
-    unsigned int index = 0;
+    size_t index = 0;
     for (size_t i = 1; i < MAIN_STEP; i++) {
         arr[index] = index + step;
-        unsigned int newIndex = (i * MAIN_STEP) + (rand() % MAIN_STEP);
+        size_t newIndex = ((i * MAIN_STEP) + (rand() % MAIN_STEP)) % arrSize;
         arr[index + step] = newIndex;
         index = newIndex;
     }
 }
 
-size_t bypass(unsigned int *arr, size_t arrSize) {
-    unsigned int k = 0, res = 0;
+size_t bypass(size_t *arr, size_t arrSize) {
+    size_t k = 0, res = 0, bypassNumber = 400;
 
     volatile size_t startTime = __builtin_ia32_rdtsc();
-    for (size_t j = 0; j < 200; j++) {
-        for (size_t i = 0; i < arrSize / (MAIN_STEP); ++i) {
+    for (size_t j = 0; j < bypassNumber; j++) {
+        for (size_t i = 0; i < arrSize / MAIN_STEP; ++i) {
             k = arr[k];
             k = arr[k];
         }
@@ -38,17 +38,17 @@ size_t bypass(unsigned int *arr, size_t arrSize) {
 
     cerr << res;
 
-    return (endTime - startTime) / (arrSize / (MAIN_STEP)) / 200;
+    return (endTime - startTime) / ((arrSize / MAIN_STEP) * bypassNumber);
 }
 
 int main() {
     ofstream fileOut;
     fileOut.open("time.txt");
 
-    const size_t arrSize = BYTE_NUM * 1024 * 1024 / sizeof(unsigned int); 
-    unsigned int *arr = new unsigned int[arrSize];
+    const size_t arrSize = BYTE_NUM * 1024 * 1024 / sizeof(size_t); 
+    size_t *arr = new size_t[arrSize];
 
-    for (size_t step = 1; step < 200; ++step) {
+    for (size_t step = 1; step < 150; ++step) {
         fillArray(arr, arrSize, step);
         fileOut << step << " " << bypass(arr, arrSize) << endl;
     }
