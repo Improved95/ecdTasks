@@ -5,8 +5,8 @@
 #include <cstring>
 using namespace std;
 
-static const size_t BYTE_NUM = 2048;
-static const size_t MAIN_STEP = 30 * 1024 / sizeof(size_t);
+static const size_t BYTE_NUM = 3072;
+static const size_t MAIN_STEP = 40 * 1024 / sizeof(size_t);
 
 void fillArray(size_t *arr, size_t arrSize, size_t step) {
     for (size_t i = 0; i < arrSize; i++) {
