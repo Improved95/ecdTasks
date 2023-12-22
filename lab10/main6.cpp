@@ -7,6 +7,7 @@ using namespace std;
 
 static const size_t BYTE_NUM = 3072;
 static const size_t MAIN_STEP = 40 * 1024 / sizeof(size_t);
+static const size_t ALIGN = 10 * 1024 / sizeof(size_t);
 
 void fillArray(size_t *arr, size_t arrSize, size_t step) {
     for (size_t i = 0; i < arrSize; i++) {
@@ -16,7 +17,7 @@ void fillArray(size_t *arr, size_t arrSize, size_t step) {
     size_t index = 0;
     for (size_t i = 1; i < MAIN_STEP; i++) {
         arr[index] = index + step;
-        size_t newIndex = ((i * MAIN_STEP) + (rand() % MAIN_STEP)) % arrSize;
+        size_t newIndex = (((i * MAIN_STEP) + (rand() % MAIN_STEP)) % ALIGN) % arrSize;
         arr[index + step] = newIndex;
         index = newIndex;
     }
